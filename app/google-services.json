@@ -1,0 +1,93 @@
+{
+  "project_info": {
+    "project_number": "492845799556",
+    "firebase_url": "https://delivery-chas.firebaseio.com",
+    "project_id": "delivery-chas",
+    "storage_bucket": "delivery-chas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:492845799556:android:80b38ed933fd0f5ad60ad1",
+        "android_client_info": {
+          "package_name": "com.chasdelivery.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "492845799556-t1bv4j6gefr2s346h1s264c914o26oh9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chasdelivery.android",
+            "certificate_hash": "1f56896fa84cd95768eaecc6856329004dbeee99"
+          }
+        },
+        {
+          "client_id": "492845799556-lj07i437kjkhq98o4bjcndp89ulk2a5m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chasdelivery.android",
+            "certificate_hash": "92aa219c8bfb886340ee0e99acf32e52fb41def7"
+          }
+        },
+        {
+          "client_id": "492845799556-nkpmqadfg63snoddngkvdijjei5r4vgu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArmKTy4FuYg27c7hPK-YjM-hRF9hjWvtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "492845799556-nkpmqadfg63snoddngkvdijjei5r4vgu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:492845799556:android:36f858f87d435433d60ad1",
+        "android_client_info": {
+          "package_name": "ec.richardnarvaez.chatf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "492845799556-bokiomlgi3srohvruit38kkisk25efk6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ec.richardnarvaez.chatf",
+            "certificate_hash": "92aa219c8bfb886340ee0e99acf32e52fb41def7"
+          }
+        },
+        {
+          "client_id": "492845799556-nkpmqadfg63snoddngkvdijjei5r4vgu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArmKTy4FuYg27c7hPK-YjM-hRF9hjWvtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "492845799556-nkpmqadfg63snoddngkvdijjei5r4vgu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

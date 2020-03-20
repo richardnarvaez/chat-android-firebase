@@ -1,0 +1,35 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="ec.richardnarvaez.chatf.MainActivity">
+    <item android:id="@+id/search"
+        android:title="search"
+        android:icon="@drawable/vector_search"
+        app:showAsAction="always|collapseActionView"
+        app:actionViewClass="android.widget.SearchView" />
+
+    <item
+        android:id="@+id/action_uno"
+        android:orderInCategory="100"
+        android:title="New Group"
+         />
+    <item
+        android:id="@+id/action_dos"
+        android:orderInCategory="100"
+        android:title="New broadcast"
+         />
+    <item
+        android:id="@+id/action_tres"
+        android:orderInCategory="100"
+        android:title="Starred messages"
+        />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+         />
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="100"
+        android:title="@string/message_logout" />
+</menu>

@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">ChatF</string>
+    <string name="action_settings">Settings</string>
+    <string name="follow_user_error">follow_user_error</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="user_logged_out_error">No esta logueado</string>
+    <string name="default_notification_channel_id" translatable="false">default_channel</string>
+
+    <string name="stringTerms" translatable="false">By continuing you agree to our\n
+        <a href="https://ec-social-app.firebaseapp.com/#/privacy">Terms</a> &amp;
+        <a href="https://ec-social-app.firebaseapp.com/#/privacy">Privacicty Policy</a>.
+    </string>
+    <string name="sigin">Mensaje de inicio</string>
+
+    <string name="facebook_app_id" translatable="false">217009489025189</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb217009489025189</string>
+    <string name="frgChat">CHATS</string>
+    <string name="frgCall">Llamadas</string>
+    <string name="message_logout">Log out</string>
+</resources>
