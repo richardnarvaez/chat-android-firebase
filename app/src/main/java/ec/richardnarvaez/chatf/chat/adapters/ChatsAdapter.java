@@ -16,8 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import ec.richardnarvaez.chatf.R;
@@ -25,6 +28,7 @@ import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
 import ec.richardnarvaez.chatf.chat.Fragments.FragmentChat;
 import ec.richardnarvaez.chatf.chat.models.Author;
 import ec.richardnarvaez.chatf.chat.models.Friends;
+import ec.richardnarvaez.chatf.chat.models.Message;
 import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 
 public class
@@ -51,8 +55,27 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
 
     /*acciones de cada item*/
     @Override
-    public void onBindViewHolder(@NonNull ChatsAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ChatsAdapter.ViewHolder holder, final int position) {
+        String IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
         //se pinta en la interfaz el nombre obteniendolo de la lista
+        final DatabaseReference commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey());
+        commentsRefNodoPrincipal.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Message nuevoMensaje = null;
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+                    nuevoMensaje = dataSnapshot1.getValue(Message.class);
+                }
+                if(nuevoMensaje!=null) {
+                    holder.itemMensaje.setText(nuevoMensaje.getText());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         holder.itemNombre.setText(list.get(position).getNombre());
         Picasso.get()
                 .load(list.get(position).getFoto())
@@ -89,11 +112,13 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView itemNombre;
         public ImageView imageView;
+        public TextView itemMensaje;
 
         public ViewHolder(@NonNull View v) {
             super(v);
             itemNombre = v.findViewById(R.id.itemName);
             imageView = v.findViewById(R.id.itemFoto);
+            itemMensaje = v.findViewById(R.id.itemMensaje);
         }
     }
 
