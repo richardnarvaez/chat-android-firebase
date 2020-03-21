@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemChatFrag"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
     android:orientation="vertical"
     tools:context="chat.Fragments.FragmentChat">
 
@@ -15,50 +16,110 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0.5"
             android:gravity="center_horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/itemFoto"
-                android:layout_width="65dp"
-                android:layout_height="65dp"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/vector_alert_profile" />
-        </RelativeLayout>
+                android:src="@drawable/vector_account" />
+
+            <FrameLayout
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/chip_like"
+                android:layout_width="12dp"
+                android:layout_height="12dp" />
+
+        </FrameLayout>
 
         <LinearLayout
-            android:id="@+id/like_box"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="4"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/itemName"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/like_box"
+                android:layout_width="match_parent"
+                android:layout_marginStart="16dp"
                 android:layout_height="wrap_content"
-                android:text="Richard Narvaez"
-                android:textStyle="bold"
-                android:textSize="23dp"/>
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/itemMensaje"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18dp"
-                android:text="mensaje..." />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/itemName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Richard Narvaez"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="9:00pm"
+                        android:layout_gravity="end"
+                        android:textStyle="bold" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:tint="@color/colorAccent"
+                            android:src="@drawable/verctor_double_check" />
+
+                        <TextView
+                            android:id="@+id/itemMensaje"
+                            android:layout_marginStart="8dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="mensaje..." />
+
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:layout_gravity="end"
+                        android:background="@drawable/chip_like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textColor="@color/emoji_white"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+99" />
+
+                    </FrameLayout>
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:background="#CCEDEDED" />
         </LinearLayout>
     </LinearLayout>
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginRight="5dp"
-        android:background="@android:color/darker_gray" />
+
 </LinearLayout>

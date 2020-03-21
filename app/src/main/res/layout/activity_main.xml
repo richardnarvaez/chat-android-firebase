@@ -8,8 +8,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/col_degrad">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -26,14 +25,19 @@
                 android:layout_height="22dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
+                android:tint="#ccc"
                 android:src="@drawable/vector_camera"/>
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
-                android:layout_marginStart="40dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabIndicatorColor="#fafafa"/>
+                android:layout_marginStart="40dp"
+                app:tabIndicatorHeight="2dp"
+                app:tabTextColor="#ccc"
+                app:tabMode="scrollable"
+                app:tabSelectedTextColor="@color/colorAccent"
+                app:tabIndicatorColor="@color/colorAccent" />
 
         </RelativeLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -45,7 +49,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:tint="@color/emoji_white"
+        app:srcCompat="@drawable/vector_message" />
 
     <include layout="@layout/content_main" />
 
