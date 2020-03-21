@@ -38,11 +38,13 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
     private Context ctx;
     DatabaseReference databaseReference;
     FirebaseDatabase database;
+
     public ChatsAdapter(Context ctx, List<Friends> list) {
         super();
         this.list = list;
-        this.ctx=ctx;
+        this.ctx = ctx;
     }
+
     @NonNull
     @Override
     /*inflate del item.xml*/
@@ -56,18 +58,22 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
     /*acciones de cada item*/
     @Override
     public void onBindViewHolder(@NonNull final ChatsAdapter.ViewHolder holder, final int position) {
-        String IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
+        final String IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
         //se pinta en la interfaz el nombre obteniendolo de la lista
         final DatabaseReference commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey());
         commentsRefNodoPrincipal.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Message nuevoMensaje = null;
-                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     nuevoMensaje = dataSnapshot1.getValue(Message.class);
                 }
-                if(nuevoMensaje!=null) {
+                if (nuevoMensaje != null) {
+                    if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
+                        holder.itemMensaje.setText("Tú: " + nuevoMensaje.getText());
+                    }else{
                     holder.itemMensaje.setText(nuevoMensaje.getText());
+                    }
                 }
             }
 
@@ -86,14 +92,14 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                 //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 //                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
-                Intent i = new Intent (ctx, ChatRoomActivity.class);
+                Intent i = new Intent(ctx, ChatRoomActivity.class);
                 //mando el key
                 i.putExtra("keyreceptor", list.get(position).getKey());
                 //i.putExtra("");
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 //                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent (ctx, ChatRoomActivity.class);
+                Intent intent = new Intent(ctx, ChatRoomActivity.class);
                 intent.putExtra("keyreceptor", list.get(position).getKey());
 // ed574b80d4953298f9d3c12ab8be11f71966c1f9
                 ctx.startActivity(i);
