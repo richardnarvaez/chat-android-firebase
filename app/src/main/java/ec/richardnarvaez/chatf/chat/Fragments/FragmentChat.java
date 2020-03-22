@@ -2,6 +2,7 @@ package ec.richardnarvaez.chatf.chat.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,8 +62,6 @@ public class FragmentChat extends Fragment {
 
         list = new ArrayList<>();
 // Se procede a llenar la lista con los nombres de los usuarios de firebase
-       // mRootReference = FirebaseDatabase.getInstance().getReference();
-
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -68,7 +69,7 @@ public class FragmentChat extends Fragment {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     Author author = dataSnapshot1.child(Constantes.AUTHOR_DATABASE).getValue(Author.class);
                     if(!author.getUid().equals(FirebaseUtils.getCurrentUserId())) {
-                        list.add(new Friends(author.getName(), author.getProfile_picture(), "", dataSnapshot1.getKey()));
+                        list.add(new Friends(author.getName(), author.getProfile_picture(), "", dataSnapshot1.getKey(),author.getIs_connected()));
                     }
                 }
 

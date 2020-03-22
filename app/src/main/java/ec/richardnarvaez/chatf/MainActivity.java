@@ -24,9 +24,14 @@ import android.widget.Toast;
 
 import androidx.viewpager.widget.ViewPager;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import ec.richardnarvaez.chatf.activities.LoginActivity;
 import ec.richardnarvaez.chatf.activities.SplashActivity;
 import ec.richardnarvaez.chatf.chat.adapters.TabsPagesAdapter;
+import ec.richardnarvaez.chatf.chat.constantes.Constantes;
 import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,6 +53,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         tabLayout = findViewById(R.id.tabs);
+        // Abrir sesion en la base de datos
+        DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(FirebaseUtils.getCurrentUserId()).child(Constantes.AUTHOR_DATABASE);
+        Map<String, Object> hopperUpdates = new HashMap<>();
+        hopperUpdates.put("is_connected", true);
+
+        hopperRef.updateChildren(hopperUpdates);
 
         //creo el viewPager
         TabsPagesAdapter tabsPagerAdapter = new TabsPagesAdapter(this, getSupportFragmentManager());
@@ -118,13 +129,46 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 // Salida de sesion
         if(id == R.id.action_logout){
-            Toast.makeText(this, "Closing session...", Toast.LENGTH_SHORT).show();
-            mAuth.signOut();
             Intent i = new Intent(MainActivity.this,LoginActivity.class);
             startActivity(i);
             finish();
+            // Cerrar sesion en la base de datos
+            DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(Objects.requireNonNull(FirebaseUtils.getCurrentUserId())).child(Constantes.AUTHOR_DATABASE);
+            Toast.makeText(this, hopperRef.toString(), Toast.LENGTH_SHORT).show();
+            Map<String, Object> hopperUpdates = new HashMap<>();
+            hopperUpdates.put("is_connected", false);
+
+            hopperRef.updateChildren(hopperUpdates);
+            // Cerrar sesion en local
+            Toast.makeText(this, "Closing session...", Toast.LENGTH_SHORT).show();
+
+            mAuth.signOut();
+
+
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onStop() {
+
+        super.onStop();
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        Toast.makeText(this, "On pause", Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        /*DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(Objects.requireNonNull(FirebaseUtils.getCurrentUserId())).child(Constantes.AUTHOR_DATABASE);
+        Toast.makeText(this, hopperRef.toString(), Toast.LENGTH_SHORT).show();
+        Map<String, Object> hopperUpdates = new HashMap<>();
+        hopperUpdates.put("is_connected", false);
+
+        hopperRef.updateChildren(hopperUpdates);
+
+        Toast.makeText(this, "Cerrando app", Toast.LENGTH_SHORT).show();*/
     }
 }

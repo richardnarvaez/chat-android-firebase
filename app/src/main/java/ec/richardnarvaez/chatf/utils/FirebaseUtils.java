@@ -66,7 +66,7 @@ public class FirebaseUtils {
     public static Author getAuthorMain() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return null;
-        return new Author(user.getEmail(),user.getDisplayName(),user.getPhotoUrl().toString(),true,0,user.getUid(),user.getDisplayName(),false);
+        return new Author(user.getEmail(),user.getDisplayName(),user.getPhotoUrl().toString(),true,0,user.getUid(),user.getDisplayName(),false,true);
 //        return new Author(user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail(), user.getUid(), "", "");
     }
 //me da la referencia o lugar donde está en la base de datos

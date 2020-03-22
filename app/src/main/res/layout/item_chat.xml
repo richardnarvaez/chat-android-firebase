@@ -30,6 +30,7 @@
                 android:src="@drawable/vector_account" />
 
             <FrameLayout
+                android:id="@+id/botonConectado"
                 android:layout_gravity="bottom|end"
                 android:background="@drawable/chip_like"
                 android:layout_width="12dp"

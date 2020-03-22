@@ -2,11 +2,14 @@ package ec.richardnarvaez.chatf.chat.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +31,7 @@ import com.squareup.picasso.Picasso;
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
 import ec.richardnarvaez.chatf.chat.Fragments.FragmentChat;
+import ec.richardnarvaez.chatf.chat.constantes.Constantes;
 import ec.richardnarvaez.chatf.chat.models.Author;
 import ec.richardnarvaez.chatf.chat.models.Friends;
 import ec.richardnarvaez.chatf.chat.models.Message;
@@ -60,35 +64,56 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
     /*acciones de cada item*/
     @Override
     public void onBindViewHolder(@NonNull final ChatsAdapter.ViewHolder holder, final int position) {
+        // busca cambios asincronos para mostrar el ultimo mensaje
         final String IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
-        //se pinta en la interfaz el nombre obteniendolo de la lista
-        final Query commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey()).limitToLast(1);
-        commentsRefNodoPrincipal.addValueEventListener(new ValueEventListener() {
+        if(IdUsuarioActivo!=null) {
+            final Query commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey()).limitToLast(1);
+            commentsRefNodoPrincipal.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Message nuevoMensaje = null;
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        nuevoMensaje = dataSnapshot1.getValue(Message.class);
+                    }
+                    if (nuevoMensaje != null) {
+                        String mensaje = nuevoMensaje.getText();
+                        if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
+                            mensaje = "Tú: " + mensaje;
+                        }
+                        // Si el mensaje es muy largo la vista previa saldra recortada
+                        if (mensaje.length() > 22) {
+                            mensaje = mensaje.substring(0, 22) + "...";
+                        }
+                        holder.itemMensaje.setText(mensaje);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        // busca cambios asincronos para mostrar si el usuario esta activo
+        /*Query userIsConnected = FirebaseUtils.getPeopleRef().child(list.get(position).getKey()).child(Constantes.AUTHOR_DATABASE).child("is_connected");
+        userIsConnected.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Message nuevoMensaje = null;
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    nuevoMensaje = dataSnapshot1.getValue(Message.class);
-                }
-                if (nuevoMensaje != null) {
-                    String mensaje = nuevoMensaje.getText();
-                    if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
-                        mensaje = "Tú: "+mensaje;
-                    }
-                    // Si el mensaje es muy largo la vista previa saldra recortada
-                    if(mensaje.length()>22){
-                        mensaje = mensaje.substring(0,22)+"...";
-                    }
-                    holder.itemMensaje.setText(mensaje);
-                }
+                holder.linearConected.setBackgroundResource(R.drawable.chip_green);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
+
+        //se pinta en la interfaz el nombre obteniendolo de la lista
         holder.itemNombre.setText(list.get(position).getNombre());
+        if(list.get(position).getIs_connected()){
+            holder.linearConected.setBackgroundResource(R.drawable.chip_green);
+        }
         Picasso.get()
                 .load(list.get(position).getFoto())
                 .into(holder.imageView);
@@ -113,6 +138,10 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
         });
     }
 
+    public void getLastMessage(){
+
+    }
+
 
     /*tamaño de la lista*/
     @Override
@@ -125,12 +154,14 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
         public TextView itemNombre;
         public ImageView imageView;
         public TextView itemMensaje;
+        public FrameLayout linearConected;
 
         public ViewHolder(@NonNull View v) {
             super(v);
             itemNombre = v.findViewById(R.id.itemName);
             imageView = v.findViewById(R.id.itemFoto);
             itemMensaje = v.findViewById(R.id.itemMensaje);
+            linearConected = v.findViewById(R.id.botonConectado);
         }
     }
 

@@ -10,6 +10,7 @@ public class Author {
     private String uid;
     private String user_name;
     private Boolean verified;
+    private Boolean is_connected;
 
     /**
      * No args constructor for use in serialization
@@ -28,8 +29,9 @@ public class Author {
      * @param type
      * @param user_name
      * @param email
+     * @param is_connected
      */
-    public Author(String email, String name, String profile_picture, Boolean sex, Integer type, String uid, String user_name, Boolean verified) {
+    public Author(String email, String name, String profile_picture, Boolean sex, Integer type, String uid, String user_name, Boolean verified,Boolean is_connected) {
         super();
         this.email = email;
         this.name = name;
@@ -39,6 +41,15 @@ public class Author {
         this.uid = uid;
         this.user_name = user_name;
         this.verified = verified;
+        this.is_connected = is_connected;
+    }
+
+    public Boolean getIs_connected() {
+        return is_connected;
+    }
+
+    public void setIs_connected(Boolean is_connected) {
+        this.is_connected = is_connected;
     }
 
     public String getEmail() {
