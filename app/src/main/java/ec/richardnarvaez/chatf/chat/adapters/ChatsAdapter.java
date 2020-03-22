@@ -2,6 +2,7 @@ package ec.richardnarvaez.chatf.chat.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -60,7 +62,7 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ChatsAdapter.ViewHolder holder, final int position) {
         final String IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
         //se pinta en la interfaz el nombre obteniendolo de la lista
-        final DatabaseReference commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey());
+        final Query commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey()).limitToLast(1);
         commentsRefNodoPrincipal.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
