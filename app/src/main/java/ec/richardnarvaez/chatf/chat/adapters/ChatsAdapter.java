@@ -69,11 +69,15 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                     nuevoMensaje = dataSnapshot1.getValue(Message.class);
                 }
                 if (nuevoMensaje != null) {
+                    String mensaje = nuevoMensaje.getText();
                     if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
-                        holder.itemMensaje.setText("Tú: " + nuevoMensaje.getText());
-                    }else{
-                    holder.itemMensaje.setText(nuevoMensaje.getText());
+                        mensaje = "Tú: "+mensaje;
                     }
+                    // Si el mensaje es muy largo la vista previa saldra recortada
+                    if(mensaje.length()>22){
+                        mensaje = mensaje.substring(0,22)+"...";
+                    }
+                    holder.itemMensaje.setText(mensaje);
                 }
             }
 
