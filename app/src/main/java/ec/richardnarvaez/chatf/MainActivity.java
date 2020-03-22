@@ -129,22 +129,17 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 // Salida de sesion
         if(id == R.id.action_logout){
+            String idUsuarioActivo = FirebaseUtils.getCurrentUserId();
+            mAuth.signOut();
             Intent i = new Intent(MainActivity.this,LoginActivity.class);
             startActivity(i);
             finish();
             // Cerrar sesion en la base de datos
-            DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(Objects.requireNonNull(FirebaseUtils.getCurrentUserId())).child(Constantes.AUTHOR_DATABASE);
-            Toast.makeText(this, hopperRef.toString(), Toast.LENGTH_SHORT).show();
+            DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(idUsuarioActivo).child(Constantes.AUTHOR_DATABASE);
             Map<String, Object> hopperUpdates = new HashMap<>();
             hopperUpdates.put("is_connected", false);
 
             hopperRef.updateChildren(hopperUpdates);
-            // Cerrar sesion en local
-            Toast.makeText(this, "Closing session...", Toast.LENGTH_SHORT).show();
-
-            mAuth.signOut();
-
-
         }
 
         return super.onOptionsItemSelected(item);
