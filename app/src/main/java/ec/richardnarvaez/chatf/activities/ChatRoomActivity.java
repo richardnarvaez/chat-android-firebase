@@ -17,6 +17,7 @@ import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
@@ -116,6 +117,11 @@ public class ChatRoomActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
 

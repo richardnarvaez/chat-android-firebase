@@ -44,10 +44,19 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager vistaP;
 
+    String IdUsuarioActivo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mAuth = FirebaseAuth.getInstance();
         super.onCreate(savedInstanceState);
+        IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
+        // actualizar atributo isLogin en base de datos
+        DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(IdUsuarioActivo).child(Constantes.AUTHOR_DATABASE);
+        Map<String, Object> hopperUpdates = new HashMap<>();
+        hopperUpdates.put("is_connected", true);
+
+        hopperRef.updateChildren(hopperUpdates);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -130,12 +139,6 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(MainActivity.this,LoginActivity.class);
             startActivity(i);
             finish();
-            // Cerrar sesion en la base de datos
-            DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(idUsuarioActivo).child(Constantes.AUTHOR_DATABASE);
-            Map<String, Object> hopperUpdates = new HashMap<>();
-            hopperUpdates.put("is_connected", false);
-
-            hopperRef.updateChildren(hopperUpdates);
         }
 
         return super.onOptionsItemSelected(item);
@@ -153,13 +156,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        /*DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(Objects.requireNonNull(FirebaseUtils.getCurrentUserId())).child(Constantes.AUTHOR_DATABASE);
-        Toast.makeText(this, hopperRef.toString(), Toast.LENGTH_SHORT).show();
+        DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(IdUsuarioActivo).child(Constantes.AUTHOR_DATABASE);
         Map<String, Object> hopperUpdates = new HashMap<>();
         hopperUpdates.put("is_connected", false);
 
         hopperRef.updateChildren(hopperUpdates);
 
-        Toast.makeText(this, "Cerrando app", Toast.LENGTH_SHORT).show();*/
     }
 }
