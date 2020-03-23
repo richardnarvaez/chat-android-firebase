@@ -63,7 +63,7 @@ public class FragmentChat extends Fragment {
 
         list = new ArrayList<>();
 // Se procede a llenar la lista con los nombres de los usuarios de firebase
-
+// Una sola vez el listener
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -83,6 +83,7 @@ public class FragmentChat extends Fragment {
 
             }
         });
+        // Un listener para controlar el usuario que se conecta o desconecta
 
         FirebaseUtils.getPeopleRef().addChildEventListener(new ChildEventListener() {
             @Override
@@ -94,8 +95,7 @@ public class FragmentChat extends Fragment {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Author author = dataSnapshot.child("author").getValue(Author.class);
                 Friends friend = new Friends(author.getName(),author.getProfile_picture(),"",author.getUid(),author.getIs_connected());
-                Log.e("mensaje: ",dataSnapshot.child("author").getValue().toString());
-               Friends otherfriend = list.get(3);
+                // Se procede a buscar el usuario
                int n=-1;
                for (Friends x : list){
                    if(friend.equals(x)){

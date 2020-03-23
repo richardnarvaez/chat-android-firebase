@@ -105,6 +105,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     FirebaseUtils.newUser();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
+                    // actualizar atributo isLogin en base de datos
                     DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(FirebaseUtils.getCurrentUserId()).child(Constantes.AUTHOR_DATABASE);
                     Map<String, Object> hopperUpdates = new HashMap<>();
                     hopperUpdates.put("is_connected", true);
