@@ -111,9 +111,16 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
 
         //se pinta en la interfaz el nombre obteniendolo de la lista
         holder.itemNombre.setText(list.get(position).getNombre());
-        if(list.get(position).getIs_connected()){
-            holder.linearConected.setBackgroundResource(R.drawable.chip_green);
+        try {
+            if(list.get(position)!=null) {
+                if (list.get(position).getIs_connected()) {
+                    holder.linearConected.setBackgroundResource(R.drawable.chip_green);
+                }
+            }
+        }catch (Exception e){
+            Log.e("error",e.toString());
         }
+
         Picasso.get()
                 .load(list.get(position).getFoto())
                 .into(holder.imageView);

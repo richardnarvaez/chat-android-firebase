@@ -50,8 +50,12 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ec.richardnarvaez.chatf.MainActivity;
 import ec.richardnarvaez.chatf.R;
+import ec.richardnarvaez.chatf.chat.constantes.Constantes;
 import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 import ec.richardnarvaez.chatf.utils.GlideUtils;
 
@@ -101,6 +105,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     FirebaseUtils.newUser();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
+                    DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(FirebaseUtils.getCurrentUserId()).child(Constantes.AUTHOR_DATABASE);
+                    Map<String, Object> hopperUpdates = new HashMap<>();
+                    hopperUpdates.put("is_connected", true);
+
+                    hopperRef.updateChildren(hopperUpdates);
                 } else {
                     Toast.makeText(LoginActivity.this, "No estas logueado :(", Toast.LENGTH_SHORT).show();
                 }

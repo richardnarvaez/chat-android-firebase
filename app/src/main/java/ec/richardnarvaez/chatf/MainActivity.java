@@ -54,11 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout = findViewById(R.id.tabs);
         // Abrir sesion en la base de datos
-        DatabaseReference hopperRef = FirebaseUtils.getPeopleRef().child(FirebaseUtils.getCurrentUserId()).child(Constantes.AUTHOR_DATABASE);
-        Map<String, Object> hopperUpdates = new HashMap<>();
-        hopperUpdates.put("is_connected", true);
 
-        hopperRef.updateChildren(hopperUpdates);
 
         //creo el viewPager
         TabsPagesAdapter tabsPagerAdapter = new TabsPagesAdapter(this, getSupportFragmentManager());
