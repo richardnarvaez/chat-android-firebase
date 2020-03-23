@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,10 +63,10 @@ public class FragmentChat extends Fragment {
 
         list = new ArrayList<>();
 // Se procede a llenar la lista con los nombres de los usuarios de firebase
-        query.addValueEventListener(new ValueEventListener() {
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                list.clear();
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     Author author = dataSnapshot1.child(Constantes.AUTHOR_DATABASE).getValue(Author.class);
                     if(!author.getUid().equals(FirebaseUtils.getCurrentUserId())) {
@@ -75,6 +76,47 @@ public class FragmentChat extends Fragment {
 
                 ChatsAdapter adapterChat = new ChatsAdapter(getContext(), list);
                 rvChats.setAdapter(adapterChat);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        FirebaseUtils.getPeopleRef().addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Author author = dataSnapshot.child("author").getValue(Author.class);
+                Friends friend = new Friends(author.getName(),author.getProfile_picture(),"",author.getUid(),author.getIs_connected());
+                Log.e("mensaje: ",dataSnapshot.child("author").getValue().toString());
+               Friends otherfriend = list.get(3);
+               int n=-1;
+               for (Friends x : list){
+                   if(friend.equals(x)){
+                       n = list.indexOf(x);
+                   }
+               }
+               if(n!=-1) {
+                   list.set(n, friend);
+                   ChatsAdapter adapterChat = new ChatsAdapter(getContext(), list);
+                   rvChats.setAdapter(adapterChat);
+               }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override

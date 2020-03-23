@@ -55,4 +55,8 @@ public class Friends {
     public void setNumero(String numero) {
         this.numero = numero;
     }
+
+    public boolean equals(Friends a){
+        return a.getKey().equals(key);
+    }
 }
