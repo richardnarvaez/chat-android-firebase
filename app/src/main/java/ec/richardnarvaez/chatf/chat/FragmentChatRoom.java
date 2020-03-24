@@ -34,6 +34,9 @@ import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import ec.richardnarvaez.chatf.R;
@@ -207,6 +210,7 @@ public class FragmentChatRoom extends Fragment {
             public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View view = null;
                 Log.e(TAG, "ITEM NUM" + viewType);
+
                 // Se verifica si el mensaje es nuestro
                 if (viewType == 1) {
                     view = LayoutInflater.from(parent.getContext())
@@ -231,6 +235,26 @@ public class FragmentChatRoom extends Fragment {
                 int seconds = (int) (milliseconds / 1000) % 60;
                 int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
                 int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+
+                String keyMensaje = getKey(position);
+
+                final DatabaseReference refMensaje = commentsRefNodoPrincipal.child(keyMensaje);
+                refMensaje.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(!Objects.equals(dataSnapshot.child("state").getValue(), "check")){
+                            Map<String, Object> hopperUpdates = new HashMap<>();
+                            hopperUpdates.put("state", "check");
+                            refMensaje.updateChildren(hopperUpdates);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
 
                 viewHolder.commentTime
                         .setText(String.format("%02d:%02d", hours, minutes));
@@ -321,7 +345,7 @@ public class FragmentChatRoom extends Fragment {
                 }
 
                 Message comment = new Message(FirebaseUtils.getCurrentUserId(), commentText.toString(),
-                        ServerValue.TIMESTAMP);
+                        ServerValue.TIMESTAMP,"sent");
                 commentsRefNodoPrincipal.push().setValue(comment, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError error, DatabaseReference firebase) {

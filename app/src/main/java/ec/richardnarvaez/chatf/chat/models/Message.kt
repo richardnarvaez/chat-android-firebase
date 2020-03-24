@@ -5,15 +5,17 @@ package ec.richardnarvaez.chatf.chat.models
  */
 
 public class Message {
+    var state: String = ""
     var user_uid: String = ""
     var text: String = ""
     var timestamp: Any = ""
 
     constructor()
 
-    constructor(_user_uid: String, text: String, timestamp: Any) {
+    constructor(_user_uid: String, text: String, timestamp: Any, state: String) {
         this.user_uid = _user_uid
         this.text = text
         this.timestamp = timestamp
+        this.state = state
     }
 }

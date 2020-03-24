@@ -13,7 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,6 +73,7 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
         if(IdUsuarioActivo!=null) {
             // busca cambios asincronos para mostrar el ultimo mensaje
             final Query commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey());
+            /*final Query commentsRefNodoSecundario = FirebaseUtils.getCommentsRef().child(list.get(position).getKey()).child(IdUsuarioActivo);*/
 // Listener para la llegada de nuevos mensajes
             commentsRefNodoPrincipal.addChildEventListener(new ChildEventListener() {
 
@@ -79,13 +82,21 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                     Message nuevoMensaje = dataSnapshot.getValue(Message.class);
 
                     if (nuevoMensaje != null) {
+                        if(!nuevoMensaje.getState().equals("check")) {
+                            Map<String, Object> hopperUpdates = new HashMap<>();
+                            hopperUpdates.put("state", "received");
+                            DatabaseReference hopperRef = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey()).child(dataSnapshot.getKey());
+                            hopperRef.updateChildren(hopperUpdates);
+                        }
                         String mensaje = nuevoMensaje.getText();
                         // verificar el autor del mensaje
                         if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
                             mensaje = "Tú: " + mensaje;
-                        }else{
-                            numeroMensajes[0]++;
-                            holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
+                        } else {
+                            if(nuevoMensaje.getState().equals("received")||nuevoMensaje.getState().equals("sent")) {
+                                numeroMensajes[0]++;
+                                holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
+                            }
                         }
                         // Controlador de mensajes largos
                         if (mensaje.length() > 22) {
@@ -118,6 +129,7 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                 }
             });
         }
+
 
         //se pinta en la interfaz el nombre obteniendolo de la lista
         holder.itemNombre.setText(list.get(position).getNombre());

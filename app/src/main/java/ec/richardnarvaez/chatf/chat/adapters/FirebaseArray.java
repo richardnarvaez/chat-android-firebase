@@ -46,6 +46,10 @@ class FirebaseArray implements ChildEventListener {
         return mSnapshots.get(index);
     }
 
+    public String getKey(int index) {return getItem(index).getKey();}
+
+
+
 
     private int getIndexForKey(String key) {
 

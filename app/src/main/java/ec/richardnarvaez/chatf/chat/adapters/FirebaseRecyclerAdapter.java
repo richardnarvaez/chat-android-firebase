@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.constraintlayout.solver.widgets.Snapshot;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -94,6 +95,11 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     public T getItem(int position) {
         return parseSnapshot(mSnapshots.getItem(position));
     }
+
+    public String getKey(int position){
+        return mSnapshots.getKey(position);
+    }
+
 
     protected T parseSnapshot(DataSnapshot snapshot) {
         return snapshot.getValue(mModelClass);

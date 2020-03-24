@@ -59,11 +59,6 @@ public class ChatRoomActivity extends AppCompatActivity {
             finish();
         }
 
-
-
-
-//        firstfragment = FragmentChatRoom.newInstance("Sala", "", "", "jskd823");
-
         if(bundle!=null){
             IdUsuarioAchatear=bundle.getString("keyreceptor");
         }else{
