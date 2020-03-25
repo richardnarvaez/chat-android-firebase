@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import ec.richardnarvaez.chatf.activities.ContactsActivity;
 import ec.richardnarvaez.chatf.activities.LoginActivity;
 import ec.richardnarvaez.chatf.activities.SplashActivity;
 import ec.richardnarvaez.chatf.chat.adapters.TabsPagesAdapter;
@@ -107,8 +108,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(MainActivity.this, ContactsActivity.class));
             }
         });
     }
