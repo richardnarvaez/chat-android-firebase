@@ -73,7 +73,8 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
         if(IdUsuarioActivo!=null) {
             // busca cambios asincronos para mostrar el ultimo mensaje
             final Query commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey());
-            /*final Query commentsRefNodoSecundario = FirebaseUtils.getCommentsRef().child(list.get(position).getKey()).child(IdUsuarioActivo);*/
+
+
 // Listener para la llegada de nuevos mensajes
             commentsRefNodoPrincipal.addChildEventListener(new ChildEventListener() {
 

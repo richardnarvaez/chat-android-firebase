@@ -37,6 +37,7 @@ import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 public class FragmentChat extends Fragment {
     //Referencia a la base de datos
     DatabaseReference mRootReference;
+    private String IdUsuarioActivo;
     //FirebaseAuth mAuth;
     //Lista
     List<Friends> list;
@@ -54,6 +55,7 @@ public class FragmentChat extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
         mRootReference = FirebaseDatabase
                 .getInstance()
                 .getReference();
@@ -62,20 +64,34 @@ public class FragmentChat extends Fragment {
                 .limitToLast(50);
 
         list = new ArrayList<>();
+
 // Se procede a llenar la lista con los nombres de los usuarios de firebase
 // Una sola vez el listener
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    Author author = dataSnapshot1.child(Constantes.AUTHOR_DATABASE).getValue(Author.class);
+                for (final DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    final Author author = dataSnapshot1.child(Constantes.AUTHOR_DATABASE).getValue(Author.class);
+                    final DatabaseReference commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(author.getUid());
+                    commentsRefNodoPrincipal.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
                     if(!author.getUid().equals(FirebaseUtils.getCurrentUserId())) {
                         list.add(new Friends(author.getName(), author.getProfile_picture(), "", dataSnapshot1.getKey(),author.getIs_connected()));
                     }
+                    ChatsAdapter adapterChat = new ChatsAdapter(getContext(), list);
+                    rvChats.setAdapter(adapterChat);
+                }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
 
-                ChatsAdapter adapterChat = new ChatsAdapter(getContext(), list);
-                rvChats.setAdapter(adapterChat);
             }
 
             @Override
@@ -93,20 +109,35 @@ public class FragmentChat extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Author author = dataSnapshot.child("author").getValue(Author.class);
-                Friends friend = new Friends(author.getName(),author.getProfile_picture(),"",author.getUid(),author.getIs_connected());
-                // Se procede a buscar el usuario
-               int n=-1;
-               for (Friends x : list){
-                   if(friend.equals(x)){
-                       n = list.indexOf(x);
-                   }
-               }
-               if(n!=-1) {
-                   list.set(n, friend);
-                   ChatsAdapter adapterChat = new ChatsAdapter(getContext(), list);
-                   rvChats.setAdapter(adapterChat);
-               }
+                final Author author = dataSnapshot.child("author").getValue(Author.class);
+                final DatabaseReference commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(author.getUid());
+                commentsRefNodoPrincipal.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Friends friend = new Friends(author.getName(), author.getProfile_picture(), "", author.getUid(), author.getIs_connected());
+                            // Se procede a buscar el usuario
+                            int n = -1;
+                            for (Friends x : list) {
+                                if (friend.equals(x)) {
+                                    n = list.indexOf(x);
+                                }
+                            }
+                            if (n != -1) {
+                                list.set(n, friend);
+                                ChatsAdapter adapterChat = new ChatsAdapter(getContext(), list);
+                                rvChats.setAdapter(adapterChat);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
             }
 
             @Override
@@ -131,4 +162,6 @@ public class FragmentChat extends Fragment {
 
         return v;
     }
+
+
 }
