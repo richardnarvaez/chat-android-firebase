@@ -71,102 +71,105 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
         final int[] numeroMensajes = {0};
         final String IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
         if(IdUsuarioActivo!=null) {
-            // busca cambios asincronos para mostrar el ultimo mensaje
-            final Query commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey());
+            String Keyposition = list.get(position).getKey();
+            if (Keyposition != null) {
+                // busca cambios asincronos para mostrar el ultimo mensaje
+                final Query commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(Keyposition);
 
 
 // Listener para la llegada de nuevos mensajes
-            commentsRefNodoPrincipal.addChildEventListener(new ChildEventListener() {
+                commentsRefNodoPrincipal.addChildEventListener(new ChildEventListener() {
 
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Message nuevoMensaje = dataSnapshot.getValue(Message.class);
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Message nuevoMensaje = dataSnapshot.getValue(Message.class);
 
-                    if (nuevoMensaje != null) {
-                        if(!nuevoMensaje.getState().equals("check")) {
-                            Map<String, Object> hopperUpdates = new HashMap<>();
-                            hopperUpdates.put("state", "received");
-                            DatabaseReference hopperRef = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey()).child(dataSnapshot.getKey());
-                            hopperRef.updateChildren(hopperUpdates);
-                        }
-                        String mensaje = nuevoMensaje.getText();
-                        // verificar el autor del mensaje
-                        if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
-                            mensaje = "Tú: " + mensaje;
-                        } else {
-                            if(nuevoMensaje.getState().equals("received")||nuevoMensaje.getState().equals("sent")) {
-                                numeroMensajes[0]++;
-                                holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
+                        if (nuevoMensaje != null) {
+                            if (!nuevoMensaje.getState().equals("check")) {
+                                Map<String, Object> hopperUpdates = new HashMap<>();
+                                hopperUpdates.put("state", "received");
+                                DatabaseReference hopperRef = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey()).child(dataSnapshot.getKey());
+                                hopperRef.updateChildren(hopperUpdates);
                             }
+                            String mensaje = nuevoMensaje.getText();
+                            // verificar el autor del mensaje
+                            if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
+                                mensaje = "Tú: " + mensaje;
+                            } else {
+                                if (nuevoMensaje.getState().equals("received") || nuevoMensaje.getState().equals("sent")) {
+                                    numeroMensajes[0]++;
+                                    holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
+                                }
+                            }
+                            // Controlador de mensajes largos
+                            if (mensaje.length() > 22) {
+                                mensaje = mensaje.substring(0, 22) + "...";
+                            }
+                            // Setear los mensajes en las vistas
+                            holder.itemMensaje.setText(mensaje);
+                            holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
                         }
-                        // Controlador de mensajes largos
-                        if (mensaje.length() > 22) {
-                            mensaje = mensaje.substring(0, 22) + "...";
-                        }
-                        // Setear los mensajes en las vistas
-                        holder.itemMensaje.setText(mensaje);
-                        holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+
+            //se pinta en la interfaz el nombre obteniendolo de la lista
+            holder.itemNombre.setText(list.get(position).getNombre());
+            try {
+                if (list.get(position) != null) {
+                    if (list.get(position).getIs_connected()) {
+                        holder.linearConected.setBackgroundResource(R.drawable.chip_green);
                     }
                 }
+            } catch (Exception e) {
+                Log.e("error: ", e.toString());
+            }
 
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            Picasso.get()
+                    .load(list.get(position).getFoto())
+                    .into(holder.imageView);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+//                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(ctx, ChatRoomActivity.class);
+                    //mando el key
+                    i.putExtra("keyreceptor", list.get(position).getKey());
+                    //i.putExtra("");
 
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ctx, ChatRoomActivity.class);
+                    intent.putExtra("keyreceptor", list.get(position).getKey());
+// ed574b80d4953298f9d3c12ab8be11f71966c1f9
+                    ctx.startActivity(i);
+                    // Resetear el contador de mensajes
+                    numeroMensajes[0] = 0;
+                    holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
+                    holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
                 }
             });
         }
-
-
-        //se pinta en la interfaz el nombre obteniendolo de la lista
-        holder.itemNombre.setText(list.get(position).getNombre());
-        try {
-            if(list.get(position)!=null) {
-                if (list.get(position).getIs_connected()) {
-                    holder.linearConected.setBackgroundResource(R.drawable.chip_green);
-                }
-            }
-        }catch (Exception e){
-            Log.e("error: ",e.toString());
-        }
-
-        Picasso.get()
-                .load(list.get(position).getFoto())
-                .into(holder.imageView);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-//                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(ctx, ChatRoomActivity.class);
-                //mando el key
-                i.putExtra("keyreceptor", list.get(position).getKey());
-                //i.putExtra("");
-
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ctx, ChatRoomActivity.class);
-                intent.putExtra("keyreceptor", list.get(position).getKey());
-// ed574b80d4953298f9d3c12ab8be11f71966c1f9
-                ctx.startActivity(i);
-                // Resetear el contador de mensajes
-                numeroMensajes[0] = 0;
-                holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
-                holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
-            }
-        });
     }
 
 
