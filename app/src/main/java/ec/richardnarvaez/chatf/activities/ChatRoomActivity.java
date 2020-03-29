@@ -6,25 +6,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import ec.richardnarvaez.chatf.R;
-import ec.richardnarvaez.chatf.chat.FragmentChatRoom;
+import ec.richardnarvaez.chatf.chat.Fragments.FragmentChatRoom;
 // HEAD
-import ec.richardnarvaez.chatf.chat.constantes.Constantes;
-import ec.richardnarvaez.chatf.chat.models.Author;
 
 import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 //ed574b80d4953298f9d3c12ab8be11f71966c1f9
 
 import android.os.Bundle;
-import android.transition.Fade;
-import android.view.View;
-import android.widget.Toast;
 
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-
-import java.util.concurrent.atomic.AtomicMarkableReference;
 
 public class ChatRoomActivity extends AppCompatActivity {
 

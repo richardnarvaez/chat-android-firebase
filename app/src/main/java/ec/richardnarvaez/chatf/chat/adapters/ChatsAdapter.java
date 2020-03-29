@@ -2,7 +2,9 @@ package ec.richardnarvaez.chatf.chat.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +15,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -70,11 +75,12 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ChatsAdapter.ViewHolder holder, final int position) {
         final int[] numeroMensajes = {0};
         final String IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
-        if(IdUsuarioActivo!=null) {
-            String Keyposition = list.get(position).getKey();
+        if (IdUsuarioActivo != null) {
+            final String Keyposition = list.get(position).getKey();
             if (Keyposition != null) {
                 // busca cambios asincronos para mostrar el ultimo mensaje
                 final Query commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(Keyposition);
+                final Query commentsRefNodoSecundary = FirebaseUtils.getCommentsRef().child(Keyposition).child(IdUsuarioActivo);
 
 
 // Listener para la llegada de nuevos mensajes
@@ -91,14 +97,60 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                                 DatabaseReference hopperRef = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey()).child(dataSnapshot.getKey());
                                 hopperRef.updateChildren(hopperUpdates);
                             }
+                            commentsRefNodoSecundary.addChildEventListener(new ChildEventListener() {
+                                @Override
+                                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                                }
+
+                                @Override
+                                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                                    Message nuevoMensaje = dataSnapshot.getValue(Message.class);
+                                    if (nuevoMensaje != null && !nuevoMensaje.getUser_uid().equals(Keyposition)) {
+                                        try {
+                                            holder.imageMessageStatus.setVisibility(View.VISIBLE);
+                                            if (nuevoMensaje.getState().equals("check")) {
+                                                holder.imageMessageStatus.setImageResource(R.drawable.verctor_double_check);
+                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(ctx, R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+                                            } else if (nuevoMensaje.getState().equals("received")) {
+                                                holder.imageMessageStatus.setImageResource(R.drawable.verctor_double_check);
+                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(ctx, R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
+                                            } else if (nuevoMensaje.getState().equals("sent")) {
+                                                holder.imageMessageStatus.setImageResource(R.drawable.ic_message_sent);
+                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(ctx, R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
+                                            }
+                                        } catch (Exception e) {
+                                            Log.e("error: ", e.toString());
+                                        }
+                                    }else{
+                                        holder.imageMessageStatus.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+
+                                @Override
+                                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                                }
+
+                                @Override
+                                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
                             String mensaje = nuevoMensaje.getText();
                             // verificar el autor del mensaje
                             if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
+                                holder.imageMessageStatus.setVisibility(View.INVISIBLE);
                                 mensaje = "Tú: " + mensaje;
                             } else {
+                                holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
                                 if (nuevoMensaje.getState().equals("received") || nuevoMensaje.getState().equals("sent")) {
                                     numeroMensajes[0]++;
-                                    holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
                                 }
                             }
                             // Controlador de mensajes largos
@@ -107,8 +159,28 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                             }
                             // Setear los mensajes en las vistas
                             holder.itemMensaje.setText(mensaje);
-                            holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
+                            try {
+                                if (!nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
+                                    long milliseconds = (long) nuevoMensaje.getTimestamp();
+                                    TimeZone tz = TimeZone.getDefault();
+                                    milliseconds = milliseconds + tz.getOffset(Calendar.ZONE_OFFSET);
+                                    int seconds = (int) (milliseconds / 1000) % 60;
+                                    int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
+                                    int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+                                    holder.itemFechaMensaje.setText(String.format("%02d:%02d", hours, minutes));
+                                    if (numeroMensajes[0] == 0) {
+                                        holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
+                                    } else {
+                                        holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
+                                        holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
+
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Log.e("error: ", e.toString());
+                            }
                         }
+                        ;
                     }
 
                     @Override
@@ -173,7 +245,6 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
     }
 
 
-
     /*tamaño de la lista*/
     @Override
     public int getItemCount() {
@@ -184,18 +255,22 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView itemNombre;
         public ImageView imageView;
+        public ImageView imageMessageStatus;
         public TextView itemMensaje;
         public FrameLayout linearConected;
         public FrameLayout layoutContadorMensajes;
         public TextView itemNumeroMensajes;
+        public TextView itemFechaMensaje;
 
         public ViewHolder(@NonNull View v) {
             super(v);
+            itemFechaMensaje = v.findViewById(R.id.tvFechaMensaje);
             itemNumeroMensajes = v.findViewById(R.id.itemContadorMensajes);
             itemNombre = v.findViewById(R.id.itemName);
             imageView = v.findViewById(R.id.itemFoto);
             itemMensaje = v.findViewById(R.id.itemMensaje);
             linearConected = v.findViewById(R.id.botonConectado);
+            imageMessageStatus = v.findViewById(R.id.imMensajeVisto);
             layoutContadorMensajes = v.findViewById(R.id.FrameLayoutContadorMensajes);
         }
     }

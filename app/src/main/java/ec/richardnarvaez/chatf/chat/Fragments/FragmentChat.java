@@ -78,7 +78,6 @@ public class FragmentChat extends Fragment {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
                                 Friends friend = new Friends(author.getName(), author.getProfile_picture(), "", dataSnapshot1.getKey(), author.getIs_connected());
-                                ChatsAdapter adapterChat = new ChatsAdapter(getContext(), list);
                                 int n = -1;
                                 for (Friends x : list) {
                                     if (friend.equals(x)) {
@@ -88,6 +87,7 @@ public class FragmentChat extends Fragment {
                                 if (n != -1) {
                                     list.set(n, friend);
                                 }
+                                ChatsAdapter adapterChat = new ChatsAdapter(getContext(), list);
                                 rvChats.setAdapter(adapterChat);
                             }
                         }
@@ -121,8 +121,18 @@ public class FragmentChat extends Fragment {
                         try {
                             if (author != null) {
                                 Friends friend = new Friends(author.getName(), author.getProfile_picture(), "", author.getUid(), author.getIs_connected());
+                                int n = -1;
+                                for (Friends x : list) {
+                                    if (friend.equals(x)) {
+                                        n = list.indexOf(x);
+                                    }
+                                }
+                                if (n != -1) {
+                                    list.set(n, friend);
+                                }else{
+                                    list.add(friend);
+                                }
                                 ChatsAdapter adapterChat = new ChatsAdapter(getContext(), list);
-                                list.add(friend);
                                 rvChats.setAdapter(adapterChat);
                         }
                     }catch(
