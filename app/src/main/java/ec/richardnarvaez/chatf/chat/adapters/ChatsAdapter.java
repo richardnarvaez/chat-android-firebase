@@ -89,13 +89,49 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         Message nuevoMensaje = dataSnapshot.getValue(Message.class);
-
                         if (nuevoMensaje != null) {
                             if (!nuevoMensaje.getState().equals("check")) {
                                 Map<String, Object> hopperUpdates = new HashMap<>();
                                 hopperUpdates.put("state", "received");
                                 DatabaseReference hopperRef = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey()).child(dataSnapshot.getKey());
                                 hopperRef.updateChildren(hopperUpdates);
+                            }
+                            String mensaje = nuevoMensaje.getText();
+                            // verificar el autor del mensaje
+                            if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
+                                holder.imageMessageStatus.setVisibility(View.VISIBLE);
+                                mensaje = "Tú: " + mensaje;
+                            } else {
+                                holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
+                                if (nuevoMensaje.getState().equals("received") || nuevoMensaje.getState().equals("sent")) {
+                                    numeroMensajes[0]++;
+                                }
+                            }
+                            // Controlador de mensajes largos
+                            if (mensaje.length() > 22) {
+                                mensaje = mensaje.substring(0, 22) + "...";
+                            }
+                            // Setear los mensajes en las vistas
+                            holder.itemMensaje.setText(mensaje);
+                            try {
+                                if (!nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
+                                    long milliseconds = (long) nuevoMensaje.getTimestamp();
+                                    TimeZone tz = TimeZone.getDefault();
+                                    milliseconds = milliseconds + tz.getOffset(Calendar.ZONE_OFFSET);
+                                    int seconds = (int) (milliseconds / 1000) % 60;
+                                    int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
+                                    int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+                                    holder.itemFechaMensaje.setText(String.format("%02d:%02d", hours, minutes));
+                                    if (numeroMensajes[0] == 0) {
+                                        holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
+                                    } else {
+                                        holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
+                                        holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
+
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Log.e("error: ", e.toString());
                             }
                             commentsRefNodoSecundary.addChildEventListener(new ChildEventListener() {
                                 @Override
@@ -142,43 +178,6 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
 
                                 }
                             });
-                            String mensaje = nuevoMensaje.getText();
-                            // verificar el autor del mensaje
-                            if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
-                                holder.imageMessageStatus.setVisibility(View.INVISIBLE);
-                                mensaje = "Tú: " + mensaje;
-                            } else {
-                                holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
-                                if (nuevoMensaje.getState().equals("received") || nuevoMensaje.getState().equals("sent")) {
-                                    numeroMensajes[0]++;
-                                }
-                            }
-                            // Controlador de mensajes largos
-                            if (mensaje.length() > 22) {
-                                mensaje = mensaje.substring(0, 22) + "...";
-                            }
-                            // Setear los mensajes en las vistas
-                            holder.itemMensaje.setText(mensaje);
-                            try {
-                                if (!nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
-                                    long milliseconds = (long) nuevoMensaje.getTimestamp();
-                                    TimeZone tz = TimeZone.getDefault();
-                                    milliseconds = milliseconds + tz.getOffset(Calendar.ZONE_OFFSET);
-                                    int seconds = (int) (milliseconds / 1000) % 60;
-                                    int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
-                                    int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
-                                    holder.itemFechaMensaje.setText(String.format("%02d:%02d", hours, minutes));
-                                    if (numeroMensajes[0] == 0) {
-                                        holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
-                                    } else {
-                                        holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
-                                        holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
-
-                                    }
-                                }
-                            } catch (Exception e) {
-                                Log.e("error: ", e.toString());
-                            }
                         }
                         ;
                     }
