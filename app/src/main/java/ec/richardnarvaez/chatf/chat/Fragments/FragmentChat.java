@@ -1,12 +1,10 @@
 package ec.richardnarvaez.chatf.chat.Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,22 +24,18 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import ec.richardnarvaez.chatf.R;
-import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
 import ec.richardnarvaez.chatf.chat.adapters.ChatsAdapter;
-import ec.richardnarvaez.chatf.chat.constantes.Constantes;
-import ec.richardnarvaez.chatf.chat.models.Author;
-import ec.richardnarvaez.chatf.chat.models.Friends;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.chat.Constants.Constants;
+import ec.richardnarvaez.chatf.chat.Models.Author;
+import ec.richardnarvaez.chatf.chat.Models.Friend;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 
 public class FragmentChat extends Fragment {
-    //Referencia a la base de datos
-    DatabaseReference mRootReference;
-    private String IdUsuarioActivo;
-    //FirebaseAuth mAuth;
-    //Lista
-    List<Friends> list;
-    RecyclerView rvChats;
+    private DatabaseReference mRootReference;
+    private String IdUserActive;
+    private List<Friend> list;
+    private RecyclerView rvChats;
 
     public FragmentChat() {
         // Required empty public constructor
@@ -55,31 +49,30 @@ public class FragmentChat extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
+        IdUserActive = FirebaseUtils.getCurrentUserId();
         mRootReference = FirebaseDatabase
                 .getInstance()
                 .getReference();
         Query query = mRootReference
-                .child(Constantes.USERS_DATABASE)
+                .child(Constants.USERS_DATABASE)
                 .limitToLast(50);
 
         list = new ArrayList<>();
 
-// Se procede a llenar la lista con los nombres de los usuarios de firebase
-// Una sola vez el listener
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (final DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    final Author author = dataSnapshot1.child(Constantes.AUTHOR_DATABASE).getValue(Author.class);
-                    final DatabaseReference commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(author.getUid());
-                    commentsRefNodoPrincipal.addListenerForSingleValueEvent(new ValueEventListener() {
+                    final Author author = dataSnapshot1.child(Constants.AUTHOR_DATABASE).getValue(Author.class);
+                    assert author != null;
+                    final DatabaseReference messagesNodePrincipal = FirebaseUtils.getCommentsRef().child(IdUserActive).child(author.getUid());
+                    messagesNodePrincipal.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                Friends friend = new Friends(author.getName(), author.getProfile_picture(), "", dataSnapshot1.getKey(), author.getIs_connected());
+                                Friend friend = new Friend(author.getName(), author.getProfile_picture(), "", dataSnapshot1.getKey(), author.getIs_connected());
                                 int n = -1;
-                                for (Friends x : list) {
+                                for (Friend x : list) {
                                     if (friend.equals(x)) {
                                         n = list.indexOf(x);
                                     }
@@ -107,7 +100,7 @@ public class FragmentChat extends Fragment {
             }
         });
 
-        FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).addChildEventListener(new ChildEventListener() {
+        FirebaseUtils.getCommentsRef().child(IdUserActive).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 String key = dataSnapshot.getKey();
@@ -120,13 +113,8 @@ public class FragmentChat extends Fragment {
                         Author author = dataSnapshot.getChildren().iterator().next().getValue(Author.class);
                         try {
                             if (author != null) {
-                                Friends friend = new Friends(author.getName(), author.getProfile_picture(), "", author.getUid(), author.getIs_connected());
-                                int n = -1;
-                                for (Friends x : list) {
-                                    if (friend.equals(x)) {
-                                        n = list.indexOf(x);
-                                    }
-                                }
+                                Friend friend = new Friend(author.getName(), author.getProfile_picture(), "", author.getUid(), author.getIs_connected());
+                                int n = findFriendById(friend);
                                 if (n != -1) {
                                     list.set(n, friend);
                                 }else{
@@ -173,9 +161,6 @@ public class FragmentChat extends Fragment {
     });
 
 
-    // Un listener para controlar el usuario que se conecta o desconecta
-
-
     View v = inflater.inflate(R.layout.fragment_chat, container, false);
     rvChats =v.findViewById(R.id.rView);
         rvChats.setLayoutManager(new
@@ -184,6 +169,16 @@ public class FragmentChat extends Fragment {
 
         return v;
 }
+
+    public int findFriendById(Friend friend){
+        int n = -1;
+        for (Friend x : list) {
+            if (friend.equals(x)) {
+                n = list.indexOf(x);
+            }
+        }
+        return n;
+    }
 
 
 }

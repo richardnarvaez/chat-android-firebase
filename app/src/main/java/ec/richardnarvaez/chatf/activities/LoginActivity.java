@@ -10,7 +10,6 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -22,8 +21,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -40,7 +37,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
 import android.view.View;
@@ -50,14 +46,9 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import ec.richardnarvaez.chatf.MainActivity;
 import ec.richardnarvaez.chatf.R;
-import ec.richardnarvaez.chatf.chat.constantes.Constantes;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
-import ec.richardnarvaez.chatf.utils.GlideUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.GlideUtils;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
@@ -149,20 +140,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         facebook = findViewById(R.id.login_facebook);
         loginFacebook();
         Button loginFacebook = findViewById(R.id.login_facebook_per);
-        loginFacebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                facebook.performClick();
-            }
-        });
+        loginFacebook.setOnClickListener(v -> facebook.performClick());
 
         google = findViewById(R.id.login_google);
-        google.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-                startActivityForResult(i, GOOGLE_CODE);
-            }
+        google.setOnClickListener(v -> {
+            Intent i = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+            startActivityForResult(i, GOOGLE_CODE);
         });
 
 
@@ -202,68 +185,26 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     void signin(String email, String password) {
         AuthCredential credential = EmailAuthProvider.getCredential(email, password);
         credentialAuth("Email", credential);
-        /*mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(LoginActivity.this, R.string.auth_failed,
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            LogInFilter();
-                        }
-
-                        progress.dismiss();
-
-                    }
-                });*/
     }
 
 
     private void credentialAuth(final String type, final AuthCredential credential) {
-//        Objects.requireNonNull(mAuth.getCurrentUser()).linkWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//            @Override
-//            public void onComplete(@NonNull Task<AuthResult> task) {
-//                if (!task.isSuccessful()) {
-//                    FirebaseUser currentUser = mAuth.getCurrentUser();
-//                    FirebaseUser prevUser = currentUser;
-//                    try {
-//                        currentUser = Tasks.await(mAuth.signInWithCredential(credential)).getUser();
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
 
-        mAuth.signInWithCredential(credential).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
+        mAuth.signInWithCredential(credential).addOnCompleteListener(LoginActivity.this, task -> {
 
-                if (!task.isSuccessful()) {
-                    Toast.makeText(LoginActivity.this, "Ocurrio un error al iniciar sesión con " + type, Toast.LENGTH_SHORT).show();
-                    if (type.equals(FACEBOOK)) {
-                        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
-                                .Callback() {
-                            @Override
-                            public void onCompleted(GraphResponse graphResponse) {
-                                LoginManager.getInstance().logOut();
-                            }
-                        }).executeAsync();
-                        //LoginManager.getInstance().logOut();
-                    } else if (type.equals(GOOGLE)) {
-                        FirebaseUtils.logOut(LoginActivity.this, googleApiClient);
-                    }
+            if (!task.isSuccessful()) {
+                Toast.makeText(LoginActivity.this, "Ocurrio un error al iniciar sesión con " + type, Toast.LENGTH_SHORT).show();
+                if (type.equals(FACEBOOK)) {
+                    new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, graphResponse -> LoginManager.getInstance().logOut()).executeAsync();
+                } else if (type.equals(GOOGLE)) {
+                    FirebaseUtils.logOut(LoginActivity.this, googleApiClient);
                 }
-
-                if (progress != null) {
-                    progress.dismiss();
-                }
-
             }
+
+            if (progress != null) {
+                progress.dismiss();
+            }
+
         });
     }
 
@@ -277,14 +218,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            //User user = dataSnapshot.getValue(User.class);
                             Boolean type = dataSnapshot.getValue(Boolean.class);
                             Log.e(TAG, "Type: " + type);
                             if (type) {
-                                //startActivity(new Intent(LoginActivity.this, BusinessActivity.class));
                                 finish();
                             } else {
-                                //startActivity(new Intent(LoginActivity.this, CustomerActivity.class));
                                 finish();
                             }
                         }
@@ -308,13 +246,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
                         if (!task.isSuccessful()) {
-                            //Toast.makeText(LoginActivity.this, R.string.auth_failed, Toast.LENGTH_SHORT).show();
                             progress.dismiss();
                         } else {
                             Log.e(TAG, "Creando usuario");
                             AuthCredential credential = EmailAuthProvider.getCredential(email, password);
                             credentialAuth("Nefty", credential);
-                            //createNewUser(task, user, email, password);
                         }
                     }
                 });
@@ -355,15 +291,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             }
                         }
                     });
-
-
             progress.dismiss();
-
         }
-
-        //Log.d("UPDATE PROFILE", "user exists=" + (firebaseAuth.getCurrentUser() != null ? "YES" : "NO"));
-        //Log.d("UPDATE PROFILE", "user anonymous=" + (firebaseAuth.getCurrentUser().isAnonymous() ? "YES" : "NO"));
-
     }
 
     @Override

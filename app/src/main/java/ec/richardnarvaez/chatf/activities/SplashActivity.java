@@ -15,9 +15,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import ec.richardnarvaez.chatf.MainActivity;
 import ec.richardnarvaez.chatf.R;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -37,80 +36,38 @@ public class SplashActivity extends AppCompatActivity {
 
     private void Firebase() {
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = firebaseAuth.getCurrentUser();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (user != null) {
-                            FirebaseUtils.getCurrentUserRef().child("author").child("user_name").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull final DataSnapshot snapshot) {
-
-                                    if (!snapshot.exists()) {
-
-                                        startActivity(new Intent(SplashActivity.this, LoginActivity.class)
-                                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-                                    } else {
-                                        startActivity(new Intent(SplashActivity.this, MainActivity.class)
-                                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-                                    }
-
-                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError error) {
-                                }
-                            });
-                            //overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-                        } else {
-                            Intent i = new Intent(SplashActivity.this, LoginActivity.class);
-                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(i);
-                            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-                        }
-                    }
-                }, 1000 * 3);
-
-                /*FirebaseUser user = firebaseAuth.getCurrentUser();
-                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mAuthListener = firebaseAuth -> {
+            final FirebaseUser user = firebaseAuth.getCurrentUser();
+            new Handler().postDelayed(() -> {
                 if (user != null) {
-                    String uid = user.getUid();
-                    mDatabase.child("users").child(uid).child("type")
-                            .child("business").addListenerForSingleValueEvent(
-                            new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    //User user = dataSnapshot.getValue(User.class);
-                                    type = dataSnapshot.getValue(Boolean.class);
-                                    Log.e(TAG, "Type: " + type);
-                                    if (type) {
-                                        startActivity(new Intent(SplashActivity.this, CustomerActivity.class));
-                                        finish();
-                                    } else {
-                                        startActivity(new Intent(SplashActivity.this, CustomerActivity.class));
-                                        finish();
-                                    }
-                                }
+                    FirebaseUtils.getCurrentUserRef().child("author").child("user_name").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull final DataSnapshot snapshot) {
+                            if (!snapshot.exists()) {
+                                Intent splashIntent = new Intent(SplashActivity.this,LoginActivity.class);
+                                splashIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(splashIntent);
+                            } else {
+                                Intent mainIntent = new Intent(SplashActivity.this,MainActivity.class);
+                                mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(mainIntent);
+                            }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                                }
-                            });
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
-                    Log.e(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                        }
 
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                        }
+                    });
                 } else {
-                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                    finish();
-                    Log.e(TAG, "onAuthStateChanged:signed_out");
-                }*/
-            }
+                    Intent intentLogin = new Intent(SplashActivity.this, LoginActivity.class);
+                    intentLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intentLogin);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                }
+            }, 1000 * 3);
         };
 
         try {
@@ -120,7 +77,6 @@ public class SplashActivity extends AppCompatActivity {
         }
 
     }
-
     @Override
     public void onStart() {
         super.onStart();

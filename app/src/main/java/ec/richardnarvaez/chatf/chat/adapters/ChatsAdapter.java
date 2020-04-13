@@ -2,8 +2,6 @@ package ec.richardnarvaez.chatf.chat.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,9 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -26,114 +22,87 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
-import ec.richardnarvaez.chatf.chat.Fragments.FragmentChat;
-import ec.richardnarvaez.chatf.chat.constantes.Constantes;
-import ec.richardnarvaez.chatf.chat.models.Author;
-import ec.richardnarvaez.chatf.chat.models.Friends;
-import ec.richardnarvaez.chatf.chat.models.Message;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.chat.Constants.Constants;
+import ec.richardnarvaez.chatf.chat.Models.Friend;
+import ec.richardnarvaez.chatf.chat.Models.Message;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 public class
 ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
-    /*Constructor: aqui se crea la lista*/
-    private final List<Friends> list;
-    private Context ctx;
+    private final List<Friend> friends;
+    private Context context;
     DatabaseReference databaseReference;
     FirebaseDatabase database;
 
-    public ChatsAdapter(Context ctx, List<Friends> list) {
+    public ChatsAdapter(Context context, List<Friend> friends) {
         super();
-        this.list = list;
-        this.ctx = ctx;
+        this.friends = friends;
+        this.context = context;
     }
 
     @NonNull
     @Override
-    /*inflate del item.xml*/
     public ChatsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat, parent, false);
-        ViewHolder viewHolder = new ViewHolder(v);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat, parent, false);
+        ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
-
     }
 
-    /*acciones de cada item*/
     @Override
     public void onBindViewHolder(@NonNull final ChatsAdapter.ViewHolder holder, final int position) {
-        final int[] numeroMensajes = {0};
-        final String IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
-        if (IdUsuarioActivo != null) {
-            final String Keyposition = list.get(position).getKey();
-            if (Keyposition != null) {
-                // busca cambios asincronos para mostrar el ultimo mensaje
-                final Query commentsRefNodoPrincipal = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(Keyposition);
-                final Query commentsRefNodoSecundary = FirebaseUtils.getCommentsRef().child(Keyposition).child(IdUsuarioActivo);
+        final int[] numberOfMessages= {0};
+        final String IdUserActive= FirebaseUtils.getCurrentUserId();
+        if (IdUserActive != null) {
+            final String friendKey = friends.get(position).getKey();
+            if (friendKey != null) {
+                final DatabaseReference messagesNodePrincipal = FirebaseUtils.getCommentsRef().child(IdUserActive).child(friendKey);
+                final DatabaseReference messagesNodeSecondary = FirebaseUtils.getCommentsRef().child(friendKey).child(IdUserActive);
 
-
-// Listener para la llegada de nuevos mensajes
-                commentsRefNodoPrincipal.addChildEventListener(new ChildEventListener() {
+                messagesNodePrincipal.addChildEventListener(new ChildEventListener() {
 
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        Message nuevoMensaje = dataSnapshot.getValue(Message.class);
-                        if (nuevoMensaje != null) {
-                            if (!nuevoMensaje.getState().equals("check")) {
-                                Map<String, Object> hopperUpdates = new HashMap<>();
-                                hopperUpdates.put("state", "received");
-                                DatabaseReference hopperRef = FirebaseUtils.getCommentsRef().child(IdUsuarioActivo).child(list.get(position).getKey()).child(dataSnapshot.getKey());
-                                hopperRef.updateChildren(hopperUpdates);
+                        Message newMessage = dataSnapshot.getValue(Message.class);
+                        if (newMessage != null) {
+                            if (!newMessage.getState().equals("check")) {
+                                setMessageStatus(IdUserActive,friends.get(position).getKey(),dataSnapshot.getKey(), Constants.MESSAGE_RECEIVED);
                             }
-                            String mensaje = nuevoMensaje.getText();
-                            // verificar el autor del mensaje
-                            if (nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
+                            String mensaje = newMessage.getText();
+                            if (checkMessageUser(newMessage,IdUserActive)) {
                                 holder.imageMessageStatus.setVisibility(View.VISIBLE);
-                                mensaje = "Tú: " + mensaje;
+                                mensaje = String.format("Tú: %s", mensaje);
                             } else {
                                 holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
-                                if (nuevoMensaje.getState().equals("received") || nuevoMensaje.getState().equals("sent")) {
-                                    numeroMensajes[0]++;
-                                }
-                            }
-                            // Controlador de mensajes largos
-                            if (mensaje.length() > 22) {
-                                mensaje = mensaje.substring(0, 22) + "...";
-                            }
-                            // Setear los mensajes en las vistas
-                            holder.itemMensaje.setText(mensaje);
-                            try {
-                                if (!nuevoMensaje.getUser_uid().equals(IdUsuarioActivo)) {
-                                    long milliseconds = (long) nuevoMensaje.getTimestamp();
-                                    TimeZone tz = TimeZone.getDefault();
-                                    milliseconds = milliseconds + tz.getOffset(Calendar.ZONE_OFFSET);
-                                    int seconds = (int) (milliseconds / 1000) % 60;
-                                    int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
-                                    int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
-                                    holder.itemFechaMensaje.setText(String.format("%02d:%02d", hours, minutes));
-                                    if (numeroMensajes[0] == 0) {
+                                if (newMessage.getState().equals(Constants.MESSAGE_RECEIVED) || newMessage.getState().equals(Constants.MESSAGE_SENT))
+                                    numberOfMessages[0]++;
+                                try {
+                                    int[] date = configureMessageDate(newMessage);
+                                    holder.itemFechaMensaje.setText(String.format("%02d:%02d", date[1], date[0]));
+                                    if (numberOfMessages[0] == 0) {
                                         holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
                                     } else {
                                         holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
-                                        holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
-
+                                        holder.itemNumeroMensajes.setText(String.valueOf(numberOfMessages[0]));
                                     }
+                                }catch (Exception e){
+                                    Log.e("error: ", e.toString());
                                 }
-                            } catch (Exception e) {
-                                Log.e("error: ", e.toString());
                             }
-                            commentsRefNodoSecundary.addChildEventListener(new ChildEventListener() {
+
+                            if (mensaje.length() > 22)
+                                mensaje = String.format("%s...", mensaje.substring(0, 22));
+
+                            holder.itemMensaje.setText(mensaje);
+                            messagesNodeSecondary.addChildEventListener(new ChildEventListener() {
                                 @Override
                                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -141,19 +110,19 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
 
                                 @Override
                                 public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                                    Message nuevoMensaje = dataSnapshot.getValue(Message.class);
-                                    if (nuevoMensaje != null && !nuevoMensaje.getUser_uid().equals(Keyposition)) {
+                                    Message newMensaje = dataSnapshot.getValue(Message.class);
+                                    if (newMensaje != null && checkMessageUser(newMessage,IdUserActive)) {
                                         try {
                                             holder.imageMessageStatus.setVisibility(View.VISIBLE);
-                                            if (nuevoMensaje.getState().equals("check")) {
-                                                holder.imageMessageStatus.setImageResource(R.drawable.verctor_double_check);
-                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(ctx, R.color.colorAccent), PorterDuff.Mode.SRC_IN);
-                                            } else if (nuevoMensaje.getState().equals("received")) {
-                                                holder.imageMessageStatus.setImageResource(R.drawable.verctor_double_check);
-                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(ctx, R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
-                                            } else if (nuevoMensaje.getState().equals("sent")) {
+                                            if (newMensaje.getState().equals(Constants.MESSAGE_CHECK)) {
+                                                holder.imageMessageStatus.setImageResource(R.drawable.vector_double_check);
+                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+                                            } else if (newMensaje.getState().equals(Constants.MESSAGE_RECEIVED)) {
+                                                holder.imageMessageStatus.setImageResource(R.drawable.vector_double_check);
+                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(context, R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
+                                            } else if (newMensaje.getState().equals(Constants.MESSAGE_SENT)) {
                                                 holder.imageMessageStatus.setImageResource(R.drawable.ic_message_sent);
-                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(ctx, R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
+                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(context, R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
                                             }
                                         } catch (Exception e) {
                                             Log.e("error: ", e.toString());
@@ -203,13 +172,11 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                     }
                 });
             }
-
-
-            //se pinta en la interfaz el nombre obteniendolo de la lista
-            holder.itemNombre.setText(list.get(position).getNombre());
+            
+            holder.itemNombre.setText(friends.get(position).getNombre());
             try {
-                if (list.get(position) != null) {
-                    if (list.get(position).getIs_connected()) {
+                if (friends.get(position) != null) {
+                    if (friends.get(position).getIs_connected()) {
                         holder.linearConected.setBackgroundResource(R.drawable.chip_green);
                     }
                 }
@@ -218,39 +185,25 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
             }
 
             Picasso.get()
-                    .load(list.get(position).getFoto())
+                    .load(friends.get(position).getFoto())
                     .into(holder.imageView);
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-//                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(ctx, ChatRoomActivity.class);
-                    //mando el key
-                    i.putExtra("keyreceptor", list.get(position).getKey());
-                    //i.putExtra("");
 
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(ctx, ChatRoomActivity.class);
-                    intent.putExtra("keyreceptor", list.get(position).getKey());
-// ed574b80d4953298f9d3c12ab8be11f71966c1f9
-                    ctx.startActivity(i);
-                    // Resetear el contador de mensajes
-                    numeroMensajes[0] = 0;
-                    holder.itemNumeroMensajes.setText(String.valueOf(numeroMensajes[0]));
-                    holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
-                }
+            holder.itemView.setOnClickListener(view -> {
+                Intent intent = new Intent(context, ChatRoomActivity.class);
+                intent.putExtra(Constants.FRIEND_KEY, friends.get(position).getKey());
+                context.startActivity(intent);
+                numberOfMessages[0] = 0;
+                holder.itemNumeroMensajes.setText(String.valueOf(numberOfMessages[0]));
+                holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
             });
         }
     }
 
-
-    /*tamaño de la lista*/
     @Override
     public int getItemCount() {
-        return this.list.size();
+        return this.friends.size();
     }
 
-    /*referencias (id) de cada elemento del xml*/
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView itemNombre;
         public ImageView imageView;
@@ -272,6 +225,26 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
             imageMessageStatus = v.findViewById(R.id.imMensajeVisto);
             layoutContadorMensajes = v.findViewById(R.id.FrameLayoutContadorMensajes);
         }
+    }
+
+    public void setMessageStatus(String currentUserKey,String friendKey,String messageKey,String messageStatus){
+        Map<String, Object> hopperUpdates = new HashMap<>();
+        hopperUpdates.put("state",messageStatus);
+        DatabaseReference hopperRef = FirebaseUtils.getCommentsRef().child(currentUserKey).child(friendKey).child(messageKey);
+        hopperRef.updateChildren(hopperUpdates);
+    }
+
+    public Boolean checkMessageUser(Message message, String idUser){
+        return message.getUser_uid().equals(idUser);
+    }
+
+    private int[] configureMessageDate(Message message){
+        long milliseconds = (long) message.getTimestamp();
+        TimeZone tz = TimeZone.getDefault();
+        milliseconds = milliseconds + tz.getOffset(Calendar.ZONE_OFFSET);
+        int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
+        int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+        return new int[]{minutes, hours};
     }
 
 }

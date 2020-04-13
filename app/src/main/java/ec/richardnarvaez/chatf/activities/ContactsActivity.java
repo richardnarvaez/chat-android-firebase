@@ -9,9 +9,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import ec.richardnarvaez.chatf.R;
-import ec.richardnarvaez.chatf.chat.Fragments.FragmentChat;
 import ec.richardnarvaez.chatf.chat.Fragments.FragmentContact;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 public class ContactsActivity extends AppCompatActivity {
 
@@ -36,12 +35,10 @@ public class ContactsActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         firstfragment = FragmentContact.newInstance();
         remplaceFragment(firstfragment);
-
     }
     @Override
     public void onStart(){
         super.onStart();
-//        Toast.makeText(this, "Ya estamos!", Toast.LENGTH_SHORT).show();
     }
 
     private void remplaceFragment(Fragment newFragment) {
@@ -52,11 +49,9 @@ public class ContactsActivity extends AppCompatActivity {
         try {
             fragment = newFragment;
             fragmentTransition = fragmentManager.beginTransaction();
-
             if (fragment.isAdded()) {
                 fragmentTransition.show(fragment);
             } else {
-                /*R.id.fragment_container*/
                 fragmentTransition.add(R.id.remplaceframelayout, fragment);
                 if (fragmentManager.getBackStackEntryCount() != 0) {
                     fragmentTransition.addToBackStack(null);

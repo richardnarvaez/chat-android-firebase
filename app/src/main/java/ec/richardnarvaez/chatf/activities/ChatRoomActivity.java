@@ -9,13 +9,11 @@ import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.chat.Fragments.FragmentChatRoom;
 // HEAD
 
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.chat.Constants.Constants;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 //ed574b80d4953298f9d3c12ab8be11f71966c1f9
 
 import android.os.Bundle;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class ChatRoomActivity extends AppCompatActivity {
 
@@ -23,92 +21,47 @@ public class ChatRoomActivity extends AppCompatActivity {
     FragmentChatRoom firstfragment;
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransition;
-// HEAD
-    DatabaseReference databaseReference;
-    FirebaseDatabase database;
-    //NavigationView navigationBottom;
-
-    private String IdUsuarioActivo;
-    private String IdUsuarioAchatear;
-
-// ed574b80d4953298f9d3c12ab8be11f71966c1f9
-
-    private String KeyReceptor;
-
+    private String IdUserActive;
+    private String IdFriendKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
         Bundle bundle=getIntent().getExtras();
-
-        //receptor del key para emparejar
-// HEAD
         if(bundle!=null){
-            KeyReceptor=bundle.getString("keyreceptor");
+            IdFriendKey =bundle.getString(Constants.FRIEND_KEY);
         }else{
             finish();
         }
-
-        if(bundle!=null){
-            IdUsuarioAchatear=bundle.getString("keyreceptor");
-        }else{
-            finish();
-        }
-        IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
+        IdUserActive = FirebaseUtils.getCurrentUserId();
         fragmentManager = getSupportFragmentManager();
-
-        firstfragment = FragmentChatRoom.newInstance(IdUsuarioActivo, "", "", IdUsuarioAchatear);
-//ed574b80d4953298f9d3c12ab8be11f71966c1f9
-
+        firstfragment = FragmentChatRoom.newInstance(IdUserActive, "", "", IdFriendKey);
         remplaceFragment(firstfragment);
-
     }
     private void remplaceFragment(Fragment newFragment) {
-
         if (fragment != null) {
             fragmentTransition = fragmentManager.beginTransaction();
             fragmentTransition.hide(fragment).commit();
         }
-
         try {
             fragment = newFragment;
-
-            /*if (fragment instanceof FragmentChatRoom) {
-                navigationBottom.setVisibility(View.VISIBLE);
-            } else {
-                navigationBottom.setVisibility(View.GONE);
-            }*/
-
-            //Effect
-            /*Fade enterFade = new Fade();
-            enterFade.setStartDelay(MOVE_DEFAULT_TIME + FADE_DEFAULT_TIME);
-            enterFade.setDuration(FADE_DEFAULT_TIME);
-            fragment.setEnterTransition(enterFade);*/
-
-            // Insert the fragment
             fragmentTransition = fragmentManager.beginTransaction();
-
             if (fragment.isAdded()) {
                 fragmentTransition.show(fragment);
             } else {
-                /*R.id.fragment_container*/
              fragmentTransition.add(R.id.remplaceframelayout, fragment);
                 if (fragmentManager.getBackStackEntryCount() != 0) {
                     fragmentTransition.addToBackStack(null);
                 }
             }
-
             fragmentTransition.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
-
-
 }
