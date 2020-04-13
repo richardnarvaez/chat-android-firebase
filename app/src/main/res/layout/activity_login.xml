@@ -10,7 +10,8 @@
         android:id="@+id/backImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/background_image" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -24,7 +25,8 @@
         android:layout_above="@id/base"
         android:layout_centerHorizontal="true"
         android:layout_margin="64dp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="@string/icon_app" />
 
     <LinearLayout
         android:id="@+id/base"
@@ -49,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Bienvenido a stories!"
+                android:text="@string/welcomeMessage"
                 android:textColor="@color/dirtyWhite"
                 android:textSize="28sp"
                 android:textStyle="bold" />
@@ -60,7 +62,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:gravity="center"
-                android:text="Cuentanos tu mejor historia"
+                android:text="@string/contentWelcome"
                 android:textColor="@color/colorWhite"
                 android:textSize="16dp" />
 
@@ -127,9 +129,9 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:backgroundTint="@color/colorWhite"
-                        android:drawableLeft="@drawable/vector_facebook"
+                        android:drawableStart="@drawable/vector_facebook"
                         android:drawablePadding="8dp"
-                        android:text="Facebook"
+                        android:text="@string/facebook"
                         android:textColor="@color/com_facebook_blue" />
                 </FrameLayout>
 
@@ -139,10 +141,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:backgroundTint="@color/colorWhite"
-                    android:drawableLeft="@drawable/vector_google"
+                    android:drawableStart="@drawable/vector_google"
                     android:drawablePadding="8dp"
                     android:drawableTint="@color/md_red_600"
-                    android:text="Google"
+                    android:text="@string/google"
                     android:textColor="@color/md_red_600" />
             </LinearLayout>
 
@@ -157,13 +159,13 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="E-Mail"
+                    android:hint="@string/e_mail"
                     android:inputType="textEmailSubject" />
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Password"
+                    android:hint="@string/password"
                     android:inputType="textPassword" />
             </LinearLayout>
 
@@ -173,12 +175,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:backgroundTint="#f44336"
-                android:drawableLeft="@drawable/vector_mail"
+                android:drawableStart="@drawable/vector_mail"
                 android:drawablePadding="8dp"
                 android:drawableTint="@color/colorWhite"
                 android:paddingEnd="32dp"
                 android:paddingStart="32dp"
-                android:text="E-Mail"
+                android:text="@string/e_mail"
                 android:textColor="@color/colorWhite"
                 android:visibility="gone" />
 

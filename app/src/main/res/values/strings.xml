@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WhatChat</string>
+    <string name="app_name">WhaChat</string>
     <string name="action_settings">Settings</string>
     <string name="follow_user_error">follow_user_error</string>
     <string name="title_activity_login">LoginActivity</string>
@@ -17,4 +17,27 @@
     <string name="frgChat">CHATS</string>
     <string name="frgCall">Llamadas</string>
     <string name="message_logout">Log out</string>
+    <string name="choose_someone">Choose someone...</string>
+    <string name="background_image">Background Image</string>
+    <string name="icon_app">Icon App</string>
+    <string name="welcomeMessage">Bienvenido a stories!</string>
+    <string name="contentWelcome">Cuentanos tu mejor historia</string>
+    <string name="facebook">Facebook</string>
+    <string name="google">Google</string>
+    <string name="e_mail">E-Mail</string>
+    <string name="password">Password</string>
+    <string name="camera">Camera</string>
+    <string name="nameFactory">NextPixl, Ecuador</string>
+    <string name="userNameDefault">Jhon Doe</string>
+    <string name="loadingText">cargando...</string>
+    <string name="followText">Follow</string>
+    <string name="exitText">exit</string>
+    <string name="chatSuggestion">Add a comment here</string>
+    <string name="emoji_iconText">Emoji Icon</string>
+    <string name="message_status">Message Status</string>
+    <string name="messageText">mensaje...</string>
+    <string name="messageDefaultText">hola</string>
+    <string name="chatDefaultMessage">hi man, how are you?</string>
+    <string name="hourDefault">11:40</string>
+    <string name="chatDefaultText2">hello, hello!</string>
 </resources>

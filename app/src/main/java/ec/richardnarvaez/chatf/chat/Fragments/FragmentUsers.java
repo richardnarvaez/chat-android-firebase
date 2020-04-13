@@ -17,11 +17,11 @@ import java.util.List;
 
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
-import ec.richardnarvaez.chatf.chat.models.Author;
-import ec.richardnarvaez.chatf.chat.models.Friends;
-import ec.richardnarvaez.chatf.chat.viewHolder.ListUserViewHolder;
+import ec.richardnarvaez.chatf.chat.Models.Author;
+import ec.richardnarvaez.chatf.chat.Models.Friend;
+import ec.richardnarvaez.chatf.chat.ViewHolder.ListUserViewHolder;
 import ec.richardnarvaez.chatf.chat.adapters.FirebaseRecyclerAdapter;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 
 public class FragmentUsers extends Fragment {
@@ -29,7 +29,7 @@ public class FragmentUsers extends Fragment {
     private FirebaseRecyclerAdapter<Author, ListUserViewHolder> mAdapter;
     private LinearLayoutManager linearLayoutManager;
     private DatabaseReference mRootReference;
-    private List<Friends> friendsList;
+    private List<Friend> friendsList;
 
     public FragmentUsers() {
         // Required empty public constructor
@@ -74,7 +74,7 @@ public class FragmentUsers extends Fragment {
                 //logica y eventos del item
                 final Context ctx=getContext();
                 //obtengo el nombre de firebase
-                holder.itemNombre.setText(data.getName());
+                holder.itemName.setText(data.getName());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
