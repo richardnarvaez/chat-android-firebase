@@ -50,7 +50,7 @@ public class ChatRoomActivity extends AppCompatActivity {
             if (fragment.isAdded()) {
                 fragmentTransition.show(fragment);
             } else {
-             fragmentTransition.add(R.id.remplaceframelayout, fragment);
+             fragmentTransition.add(R.id.replaceFrameLayout, fragment);
                 if (fragmentManager.getBackStackEntryCount() != 0) {
                     fragmentTransition.addToBackStack(null);
                 }

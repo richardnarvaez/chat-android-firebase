@@ -28,7 +28,7 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
-        Toolbar toolbar = findViewById(R.id.toolbarcontacts);
+        Toolbar toolbar = findViewById(R.id.toolBarContacts);
         setSupportActionBar(toolbar);
         Bundle bundle=getIntent().getExtras();
         IdUsuarioActivo = FirebaseUtils.getCurrentUserId();
@@ -52,7 +52,7 @@ public class ContactsActivity extends AppCompatActivity {
             if (fragment.isAdded()) {
                 fragmentTransition.show(fragment);
             } else {
-                fragmentTransition.add(R.id.remplaceframelayout, fragment);
+                fragmentTransition.add(R.id.replaceFrameLayout, fragment);
                 if (fragmentManager.getBackStackEntryCount() != 0) {
                     fragmentTransition.addToBackStack(null);
                 }

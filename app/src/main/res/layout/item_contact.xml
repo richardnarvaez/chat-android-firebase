@@ -59,7 +59,7 @@
                         android:id="@+id/contactName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Richard Narvaez"
+                        android:text="@string/userNameDefault"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 

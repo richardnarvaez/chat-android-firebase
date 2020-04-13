@@ -216,13 +216,13 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
 
         public ViewHolder(@NonNull View v) {
             super(v);
-            itemFechaMensaje = v.findViewById(R.id.tvFechaMensaje);
+            itemFechaMensaje = v.findViewById(R.id.tvMessageDate);
             itemNumeroMensajes = v.findViewById(R.id.itemContadorMensajes);
             itemNombre = v.findViewById(R.id.itemName);
             imageView = v.findViewById(R.id.itemFoto);
-            itemMensaje = v.findViewById(R.id.itemMensaje);
-            linearConected = v.findViewById(R.id.botonConectado);
-            imageMessageStatus = v.findViewById(R.id.imMensajeVisto);
+            itemMensaje = v.findViewById(R.id.itemMessage);
+            linearConected = v.findViewById(R.id.buttonConnected);
+            imageMessageStatus = v.findViewById(R.id.imMessageStatus);
             layoutContadorMensajes = v.findViewById(R.id.FrameLayoutContadorMensajes);
         }
     }

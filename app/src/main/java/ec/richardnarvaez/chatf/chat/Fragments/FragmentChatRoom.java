@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -102,7 +101,7 @@ public class FragmentChatRoom extends Fragment {
                 false);
         final LinearLayout linearLayout = rootView.findViewById(R.id.like_box);
         final RecyclerView mCommentsView = rootView.findViewById(R.id.comment_list);
-        mEditText = rootView.findViewById(R.id.commenttext);
+        mEditText = rootView.findViewById(R.id.commentText);
         final EmojiPopup emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(mEditText);
         final ImageView emoji = rootView.findViewById(R.id.emoji);
         final ImageView profileThumbnail = rootView.findViewById(R.id.profileThumbnail);

@@ -26,7 +26,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
                 android:tint="#ccc"
-                android:src="@drawable/vector_camera"/>
+                android:src="@drawable/vector_camera"
+                android:contentDescription="@string/camera" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"

@@ -64,7 +64,7 @@
                 android:gravity="center"
                 android:text="@string/contentWelcome"
                 android:textColor="@color/colorWhite"
-                android:textSize="16dp" />
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -160,13 +160,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/e_mail"
-                    android:inputType="textEmailSubject" />
+                    android:inputType="textEmailSubject"
+                    android:autofillHints="" />
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:autofillHints="" />
             </LinearLayout>
 
             <Button
