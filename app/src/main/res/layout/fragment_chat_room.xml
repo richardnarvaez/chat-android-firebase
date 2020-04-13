@@ -45,14 +45,14 @@
                 android:id="@+id/tvName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Richard Narvaez"
+                android:text="@string/userNameDefault"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvUserName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="cargando..." />
+                android:text="@string/loadingText" />
         </LinearLayout>
 
         <Button
@@ -60,7 +60,7 @@
             android:layout_height="32dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/chip_like"
-            android:text="Follow"
+            android:text="@string/followText"
             android:textColor="@color/colorWhite" />
 
         <ImageView
@@ -72,7 +72,8 @@
             android:layout_weight="0.5"
             android:rotation="180"
             android:src="@drawable/vector_details"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:contentDescription="@string/exitText" />
 
         <ImageView
             android:id="@+id/exit_mess"
@@ -83,7 +84,8 @@
             android:layout_marginStart="8dp"
             android:layout_weight="0.5"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/vector_x" />
+            android:src="@drawable/vector_x"
+            android:contentDescription="@string/exitText" />
 
     </LinearLayout>
 
@@ -140,10 +142,11 @@
             android:padding="4dp"
             android:tint="@color/colorNoSelect"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/vector_camera" />
+            app:srcCompat="@drawable/vector_camera"
+            android:contentDescription="@string/camera" />
 
         <com.vanniktech.emoji.EmojiEditText
-            android:id="@+id/commenttext"
+            android:id="@+id/commentText"
             android:layout_width="match_parent"
             android:layout_toEndOf="@id/send_photo"
             android:layout_height="wrap_content"
@@ -151,7 +154,7 @@
             android:layout_gravity="center_vertical"
             android:layout_toStartOf="@+id/send_comment"
             android:background="@drawable/chip_border_white"
-            android:hint="Add a comment here"
+            android:hint="@string/chatSuggestion"
             android:inputType="textMultiLine"
             android:maxLines="4"
             android:textSize="16sp" />
@@ -160,11 +163,12 @@
             android:id="@+id/emoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/commenttext"
+            android:layout_alignEnd="@+id/commentText"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/vector_emoji" />
+            android:src="@drawable/vector_emoji"
+            android:contentDescription="@string/emoji_iconText" />
 
 
         <LinearLayout

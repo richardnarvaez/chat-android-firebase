@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -26,7 +26,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
                 android:tint="#ccc"
-                android:src="@drawable/vector_camera"/>
+                android:src="@drawable/vector_camera"
+                android:contentDescription="@string/camera" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
@@ -44,7 +45,7 @@
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/contactsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

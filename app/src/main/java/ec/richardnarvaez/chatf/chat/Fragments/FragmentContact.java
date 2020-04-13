@@ -21,19 +21,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ec.richardnarvaez.chatf.R;
-import ec.richardnarvaez.chatf.chat.adapters.ChatsAdapter;
 import ec.richardnarvaez.chatf.chat.adapters.ContactAdapter;
-import ec.richardnarvaez.chatf.chat.constantes.Constantes;
-import ec.richardnarvaez.chatf.chat.models.Author;
-import ec.richardnarvaez.chatf.chat.models.Friends;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.chat.Constants.Constants;
+import ec.richardnarvaez.chatf.chat.Models.Author;
+import ec.richardnarvaez.chatf.chat.Models.Friend;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 public class FragmentContact extends Fragment {
-    DatabaseReference mRootReference;
-    //FirebaseAuth mAuth;
-    //Lista
-    List<Friends> list;
-    RecyclerView rvContacts;
+    private DatabaseReference mRootReference;
+    private List<Friend> friends;
+    private RecyclerView rvContacts;
 
     public FragmentContact() {
     }
@@ -45,29 +42,29 @@ public class FragmentContact extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Assignations
         mRootReference = FirebaseDatabase
                 .getInstance()
                 .getReference();
         Query query = mRootReference
-                .child(Constantes.USERS_DATABASE)
+                .child(Constants.USERS_DATABASE)
                 .limitToLast(50);
 
-        list = new ArrayList<>();
-// Se procede a llenar la lista con los nombres de los usuarios de firebase
-        // mRootReference = FirebaseDatabase.getInstance().getReference();
+        friends = new ArrayList<>();
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                list.clear();
+                friends.clear();
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    Author author = dataSnapshot1.child(Constantes.AUTHOR_DATABASE).getValue(Author.class);
+                    Author author = dataSnapshot1.child(Constants.AUTHOR_DATABASE).getValue(Author.class);
+                    assert author != null;
                     if(!author.getUid().equals(FirebaseUtils.getCurrentUserId())) {
-                        list.add(new Friends(author.getName(), author.getProfile_picture(), "", dataSnapshot1.getKey(),author.getIs_connected()));
+                        friends.add(new Friend(author.getName(), author.getProfile_picture(), "", dataSnapshot1.getKey(),author.getIs_connected()));
                     }
                 }
 
-                ContactAdapter adapterContact = new ContactAdapter(getContext(), list);
+                ContactAdapter adapterContact = new ContactAdapter(getContext(), friends);
                 rvContacts.setAdapter(adapterContact);
             }
 

@@ -45,7 +45,6 @@ public class TabsPagesAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 2 total pages.
         return 2;
     }
 

@@ -39,7 +39,6 @@ class FirebaseArray implements ChildEventListener {
     //tamaño de la lista de snapshots
     public int getCount() {
         return mSnapshots.size();
-
     }
 
     public DataSnapshot getItem(int index) {

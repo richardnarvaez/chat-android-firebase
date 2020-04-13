@@ -13,81 +13,59 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
-import ec.richardnarvaez.chatf.chat.models.Friends;
+import ec.richardnarvaez.chatf.chat.Constants.Constants;
+import ec.richardnarvaez.chatf.chat.Models.Friend;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
-    /*Constructor: aqui se crea la lista*/
-    private final List<Friends> list;
-    private Context ctx;
-    DatabaseReference databaseReference;
-    FirebaseDatabase database;
-    public ContactAdapter(Context ctx, List<Friends> list) {
+    private final List<Friend> friends;
+    private Context context;
+
+    public ContactAdapter(Context context, List<Friend> friends) {
         super();
-        this.list = list;
-        this.ctx=ctx;
+        this.friends = friends;
+        this.context =context;
     }
     @NonNull
     @Override
-    /*inflate del item.xml*/
+
+
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contacttochat, parent, false);
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact, parent, false);
+        return new ViewHolder(view);
 
     }
 
-    /*acciones de cada item*/
+
     @Override
     public void onBindViewHolder(@NonNull ContactAdapter.ViewHolder holder, final int position) {
-//se pinta en la interfaz el nombre obteniendolo de la lista
-        holder.itemNombre.setText(list.get(position).getNombre());
+        holder.contactName.setText(friends.get(position).getNombre());
         Picasso.get()
-                .load(list.get(position).getFoto())
-                .into(holder.imageView);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-//HEAD
-                //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-//                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
-                Intent i = new Intent (ctx, ChatRoomActivity.class);
-                //mando el key
-                i.putExtra("keyreceptor", list.get(position).getKey());
-                //i.putExtra("");
-
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                Toast.makeText(ctx, ""+list.get(position).getKey(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent (ctx, ChatRoomActivity.class);
-                intent.putExtra("keyreceptor", list.get(position).getKey());
-// ed574b80d4953298f9d3c12ab8be11f71966c1f9
-                ctx.startActivity(i);
-            }
+                .load(friends.get(position).getFoto())
+                .into(holder.contactPicture);
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent (context, ChatRoomActivity.class);
+            intent.putExtra(Constants.FRIEND_KEY, friends.get(position).getKey());
+            context.startActivity(intent);
         });
     }
 
-    /*tamaño de la lista*/
     @Override
     public int getItemCount() {
-        return this.list.size();
+        return this.friends.size();
     }
 
-    /*referencias (id) de cada elemento del xml*/
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView itemNombre;
-        public ImageView imageView;
+        TextView contactName;
+        ImageView contactPicture;
 
-        public ViewHolder(@NonNull View v) {
+        ViewHolder(@NonNull View v) {
             super(v);
-            itemNombre = v.findViewById(R.id.itemName);
-            imageView = v.findViewById(R.id.itemFoto);
+            contactName = v.findViewById(R.id.contactName);
+            contactPicture = v.findViewById(R.id.contactPicture);
         }
     }
 

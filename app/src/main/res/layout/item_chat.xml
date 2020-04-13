@@ -30,7 +30,7 @@
                 android:src="@drawable/vector_account" />
 
             <FrameLayout
-                android:id="@+id/botonConectado"
+                android:id="@+id/buttonConnected"
                 android:layout_gravity="bottom|end"
                 android:background="@drawable/chip_like"
                 android:layout_width="12dp"
@@ -60,14 +60,15 @@
                         android:id="@+id/itemName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Richard Narvaez"
+                        android:text="@string/userNameDefault"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvMessageDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="9:00pm"
+                        android:text=""
                         android:layout_gravity="end"
                         android:textStyle="bold" />
 
@@ -83,17 +84,19 @@
                         android:layout_height="wrap_content">
 
                         <ImageView
+                            android:id="@+id/imMessageStatus"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:tint="@color/colorAccent"
-                            android:src="@drawable/verctor_double_check" />
+                            android:tint="@color/md_grey_500"
+                            android:src="@drawable/ic_message_sent"
+                            android:contentDescription="@string/message_status" />
 
                         <TextView
-                            android:id="@+id/itemMensaje"
+                            android:id="@+id/itemMessage"
                             android:layout_marginStart="8dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="mensaje..." />
+                            android:text="@string/messageText" />
 
                     </LinearLayout>
 
