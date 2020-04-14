@@ -1,4 +1,4 @@
-package ec.richardnarvaez.chatf.Utils;
+package ec.richardnarvaez.chatf.utils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

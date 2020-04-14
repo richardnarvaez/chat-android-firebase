@@ -1,4 +1,4 @@
-package ec.richardnarvaez.chatf.chat.Models
+package ec.richardnarvaez.chatf.chat.models
 
 /**
  * Created by macbookpro on 2/27/18.

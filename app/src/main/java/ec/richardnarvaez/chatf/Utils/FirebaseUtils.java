@@ -1,4 +1,4 @@
-package ec.richardnarvaez.chatf.Utils;
+package ec.richardnarvaez.chatf.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,7 +31,9 @@ import java.util.Map;
 
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.LoginActivity;
-import ec.richardnarvaez.chatf.chat.Models.Author;
+import ec.richardnarvaez.chatf.activities.MainActivity;
+import ec.richardnarvaez.chatf.chat.Constants.Constants;
+import ec.richardnarvaez.chatf.chat.models.Author;
 
 
 /**
@@ -62,13 +64,15 @@ public class FirebaseUtils {
     public static boolean isLogin() {
         return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
-//todos los datos del usuario logueado
+
+    //todos los datos del usuario logueado
     public static Author getAuthorMain() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return null;
-        return new Author(user.getEmail(),user.getDisplayName(),user.getPhotoUrl().toString(),true,0,user.getUid(),user.getDisplayName(),false,true);
+        return new Author(user.getEmail(), user.getDisplayName(), user.getPhotoUrl().toString(), true, 0, user.getUid(), user.getDisplayName(), false, true);
 //        return new Author(user.getDisplayName(), user.getPhotoUrl().toString(), user.getEmail(), user.getUid(), "", "");
     }
+
     public static DatabaseReference getAuthorAccount() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return null;
@@ -267,7 +271,8 @@ public class FirebaseUtils {
             }
         });
     }
-//crea nuevo usuario con cambios
+
+    //crea nuevo usuario con cambios
     public static void newUser(String onlyname, String userName, boolean checked) {
 
         Author autor = FirebaseUtils.getAuthorMain();
@@ -304,13 +309,14 @@ public class FirebaseUtils {
                 });
 
     }
-//nuevo usuario por defecto
+
+    //nuevo usuario por defecto
     public static void newUser() {
 
         Author autor = FirebaseUtils.getAuthorMain();
         DatabaseReference usersRef = FirebaseUtils.getCurrentUserRef();
 
-        if(autor != null){
+        if (autor != null) {
             HashMap<String, Object> val = new HashMap<>();
             val.put("name", autor.getName());
             val.put("profile_picture", autor.getProfile_picture());
@@ -323,12 +329,13 @@ public class FirebaseUtils {
 
             assert usersRef != null;
             usersRef.child("author").setValue(val);
-        }else{
+        } else {
             Log.e("TAG", "Iniciando sesion...");
         }
 
     }
-//salir de sesión
+
+    //salir de sesión
     public static void logOut(final Activity ctx, GoogleApiClient mGoogleApiClient) {
 
         FirebaseAuth.getInstance().signOut();
@@ -344,4 +351,13 @@ public class FirebaseUtils {
     }
 
 
+    public static void setLiveState(boolean state) {
+        DatabaseReference userLastOnlineRef = getPeopleRef()
+                .child(getCurrentUserId())
+                .child(Constants.AUTHOR_DATABASE);
+        userLastOnlineRef.child("is_connected").setValue(state);
+        if (!state) {
+            userLastOnlineRef.child("last_connection").setValue(ServerValue.TIMESTAMP);
+        }
+    }
 }

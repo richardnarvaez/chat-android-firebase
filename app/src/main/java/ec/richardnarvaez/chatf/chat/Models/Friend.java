@@ -1,4 +1,4 @@
-package ec.richardnarvaez.chatf.chat.Models;
+package ec.richardnarvaez.chatf.chat.models;
 
 
 public class Friend {

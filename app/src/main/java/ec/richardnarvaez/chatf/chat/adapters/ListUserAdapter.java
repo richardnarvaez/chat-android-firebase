@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
-import ec.richardnarvaez.chatf.chat.Models.Friend;
+import ec.richardnarvaez.chatf.chat.models.Friend;
 
 
 public class ListUserAdapter extends RecyclerView.Adapter<ListUserAdapter.ViewHolder> {

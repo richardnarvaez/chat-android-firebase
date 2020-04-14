@@ -18,7 +18,7 @@ import com.squareup.picasso.Picasso;
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
-import ec.richardnarvaez.chatf.chat.Models.Friend;
+import ec.richardnarvaez.chatf.chat.models.Friend;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
     private final List<Friend> friends;

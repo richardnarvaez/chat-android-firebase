@@ -23,9 +23,9 @@ import java.util.List;
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.chat.adapters.ContactAdapter;
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
-import ec.richardnarvaez.chatf.chat.Models.Author;
-import ec.richardnarvaez.chatf.chat.Models.Friend;
-import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.chat.models.Author;
+import ec.richardnarvaez.chatf.chat.models.Friend;
+import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 
 public class FragmentContact extends Fragment {
     private DatabaseReference mRootReference;
@@ -42,10 +42,12 @@ public class FragmentContact extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Assignations
         mRootReference = FirebaseDatabase
                 .getInstance()
                 .getReference();
+
         Query query = mRootReference
                 .child(Constants.USERS_DATABASE)
                 .limitToLast(50);

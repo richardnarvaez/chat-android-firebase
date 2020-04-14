@@ -17,11 +17,11 @@ import java.util.List;
 
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
-import ec.richardnarvaez.chatf.chat.Models.Author;
-import ec.richardnarvaez.chatf.chat.Models.Friend;
+import ec.richardnarvaez.chatf.chat.models.Author;
+import ec.richardnarvaez.chatf.chat.models.Friend;
 import ec.richardnarvaez.chatf.chat.ViewHolder.ListUserViewHolder;
 import ec.richardnarvaez.chatf.chat.adapters.FirebaseRecyclerAdapter;
-import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 
 
 public class FragmentUsers extends Fragment {
@@ -88,7 +88,7 @@ public class FragmentUsers extends Fragment {
             };
         };
         linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setStackFromEnd(true);
+//        linearLayoutManager.setStackFromEnd(true);
         linearLayoutManager.setSmoothScrollbarEnabled(false);
 
         rv.setLayoutManager(linearLayoutManager);

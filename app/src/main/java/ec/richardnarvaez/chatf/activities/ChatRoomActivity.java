@@ -10,7 +10,7 @@ import ec.richardnarvaez.chatf.chat.Fragments.FragmentChatRoom;
 // HEAD
 
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
-import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 //ed574b80d4953298f9d3c12ab8be11f71966c1f9
 
 import android.os.Bundle;
@@ -29,11 +29,13 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
         Bundle bundle=getIntent().getExtras();
+
         if(bundle!=null){
             IdFriendKey =bundle.getString(Constants.FRIEND_KEY);
         }else{
             finish();
         }
+
         IdUserActive = FirebaseUtils.getCurrentUserId();
         fragmentManager = getSupportFragmentManager();
         firstfragment = FragmentChatRoom.newInstance(IdUserActive, "", "", IdFriendKey);

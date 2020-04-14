@@ -32,9 +32,9 @@ import com.squareup.picasso.Picasso;
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
-import ec.richardnarvaez.chatf.chat.Models.Friend;
-import ec.richardnarvaez.chatf.chat.Models.Message;
-import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.chat.models.Friend;
+import ec.richardnarvaez.chatf.chat.models.Message;
+import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 
 public class
 ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
@@ -67,45 +67,70 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                 final DatabaseReference messagesNodePrincipal = FirebaseUtils.getCommentsRef().child(IdUserActive).child(friendKey);
                 final DatabaseReference messagesNodeSecondary = FirebaseUtils.getCommentsRef().child(friendKey).child(IdUserActive);
 
-                messagesNodePrincipal.addChildEventListener(new ChildEventListener() {
+                messagesNodePrincipal.limitToLast(1).addChildEventListener(new ChildEventListener() {
 
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         Message newMessage = dataSnapshot.getValue(Message.class);
+
                         if (newMessage != null) {
-                            if (!newMessage.getState().equals("check")) {
-                                setMessageStatus(IdUserActive,friends.get(position).getKey(),dataSnapshot.getKey(), Constants.MESSAGE_RECEIVED);
-                            }
+
+//                            if (!newMessage.getState().equals("check")) {
+//                                setMessageStatus(IdUserActive,friends.get(position).getKey(),dataSnapshot.getKey(), Constants.MESSAGE_RECEIVED);
+//                            }
+
                             String mensaje = newMessage.getText();
-                            if (checkMessageUser(newMessage,IdUserActive)) {
+
+                            if (checkMessageUser(newMessage, IdUserActive)) {
                                 holder.imageMessageStatus.setVisibility(View.VISIBLE);
-                                mensaje = String.format("Tú: %s", mensaje);
+//                                mensaje = String.format("Tú: %s", mensaje);
                             } else {
+                                holder.imageMessageStatus.setVisibility(View.GONE);
                                 holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
                                 if (newMessage.getState().equals(Constants.MESSAGE_RECEIVED) || newMessage.getState().equals(Constants.MESSAGE_SENT))
                                     numberOfMessages[0]++;
-                                try {
-                                    int[] date = configureMessageDate(newMessage);
-                                    holder.itemFechaMensaje.setText(String.format("%02d:%02d", date[1], date[0]));
-                                    if (numberOfMessages[0] == 0) {
-                                        holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
-                                    } else {
-                                        holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
-                                        holder.itemNumeroMensajes.setText(String.valueOf(numberOfMessages[0]));
-                                    }
-                                }catch (Exception e){
-                                    Log.e("error: ", e.toString());
+                            }
+
+                            try {
+                                int[] date = configureMessageDate(newMessage);
+                                holder.itemFechaMensaje.setText(String.format("%02d:%02d", date[1], date[0]));
+                                if (numberOfMessages[0] == 0) {
+                                    holder.layoutContadorMensajes.setVisibility(View.INVISIBLE);
+                                } else {
+                                    holder.layoutContadorMensajes.setVisibility(View.VISIBLE);
+                                    holder.itemNumeroMensajes.setText(String.valueOf(numberOfMessages[0]));
                                 }
+                            }catch (Exception e){
+                                Log.e("error: ", e.toString());
                             }
 
                             if (mensaje.length() > 22)
                                 mensaje = String.format("%s...", mensaje.substring(0, 22));
 
                             holder.itemMensaje.setText(mensaje);
-                            messagesNodeSecondary.addChildEventListener(new ChildEventListener() {
+                            messagesNodeSecondary.limitToLast(1).addChildEventListener(new ChildEventListener() {
                                 @Override
                                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                                    Message newMensaje = dataSnapshot.getValue(Message.class);
+                                    if (newMensaje != null && checkMessageUser(newMessage, IdUserActive)) {
+                                        try {
+                                            holder.imageMessageStatus.setVisibility(View.VISIBLE);
+                                            if (newMensaje.getState().equals(Constants.MESSAGE_CHECK)) {
+                                                holder.imageMessageStatus.setImageResource(R.drawable.vector_double_check);
+                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+                                            } else if (newMensaje.getState().equals(Constants.MESSAGE_RECEIVED)) {
+                                                holder.imageMessageStatus.setImageResource(R.drawable.vector_double_check);
+                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(context, R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
+                                            } else if (newMensaje.getState().equals(Constants.MESSAGE_SENT)) {
+                                                holder.imageMessageStatus.setImageResource(R.drawable.ic_message_sent);
+                                                holder.imageMessageStatus.setColorFilter(ContextCompat.getColor(context, R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
+                                            }
+                                        } catch (Exception e) {
+                                            Log.e("error: ", e.toString());
+                                        }
+                                    }else{
+                                        holder.imageMessageStatus.setVisibility(View.INVISIBLE);
+                                    }
                                 }
 
                                 @Override
@@ -128,7 +153,7 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
                                             Log.e("error: ", e.toString());
                                         }
                                     }else{
-                                        holder.imageMessageStatus.setVisibility(View.INVISIBLE);
+                                        holder.imageMessageStatus.setVisibility(View.GONE);
                                     }
                                 }
 
@@ -227,9 +252,9 @@ ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
         }
     }
 
-    public void setMessageStatus(String currentUserKey,String friendKey,String messageKey,String messageStatus){
+    public void setMessageStatus(String currentUserKey,String friendKey,String messageKey, String messageStatus){
         Map<String, Object> hopperUpdates = new HashMap<>();
-        hopperUpdates.put("state",messageStatus);
+        hopperUpdates.put("state", messageStatus);
         DatabaseReference hopperRef = FirebaseUtils.getCommentsRef().child(currentUserKey).child(friendKey).child(messageKey);
         hopperRef.updateChildren(hopperUpdates);
     }

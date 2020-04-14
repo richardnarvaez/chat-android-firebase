@@ -1,4 +1,4 @@
-package ec.richardnarvaez.chatf.chat.Models;
+package ec.richardnarvaez.chatf.chat.models;
 
 public class Author {
 
@@ -11,6 +11,15 @@ public class Author {
     private String user_name;
     private Boolean verified;
     private Boolean is_connected;
+    private long last_connection;
+
+    public long getLast_connection() {
+        return last_connection;
+    }
+
+    public void setLast_connection(long last_connection) {
+        this.last_connection = last_connection;
+    }
 
     /**
      * No args constructor for use in serialization

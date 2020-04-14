@@ -24,8 +24,8 @@ import com.google.firebase.database.Query;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import ec.richardnarvaez.chatf.chat.Models.Message;
-import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.chat.models.Message;
+import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 
 
 public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {

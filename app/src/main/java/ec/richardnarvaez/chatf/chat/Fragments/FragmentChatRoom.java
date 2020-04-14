@@ -43,11 +43,11 @@ import java.util.TimeZone;
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
 import ec.richardnarvaez.chatf.chat.adapters.FirebaseRecyclerAdapter;
-import ec.richardnarvaez.chatf.chat.Models.Author;
-import ec.richardnarvaez.chatf.chat.Models.Message;
+import ec.richardnarvaez.chatf.chat.models.Message;
 import ec.richardnarvaez.chatf.chat.ViewHolder.MessageViewHolder;
-import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
-import ec.richardnarvaez.chatf.Utils.GlideUtils;
+import ec.richardnarvaez.chatf.chat.models.Author;
+import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.utils.GlideUtils;
 
 public class FragmentChatRoom extends Fragment {
     // Items
@@ -55,7 +55,7 @@ public class FragmentChatRoom extends Fragment {
     private String url_thum, url_full;
     private LinearLayoutManager linearLayoutManager;
     private boolean detail = false;
-    private TextView tvName, tvUserName;
+    private TextView tvName, tvState;
     private ImageView exit_mess, send_photo;
     // Firebase ID's
     private String IdUserActive;
@@ -96,7 +96,6 @@ public class FragmentChatRoom extends Fragment {
         EmojiManager.install(new IosEmojiProvider());
 
         // Assignations
-
         final View rootView = inflater.inflate(R.layout.fragment_chat_room, container,
                 false);
         final LinearLayout linearLayout = rootView.findViewById(R.id.like_box);
@@ -106,11 +105,13 @@ public class FragmentChatRoom extends Fragment {
         final ImageView emoji = rootView.findViewById(R.id.emoji);
         final ImageView profileThumbnail = rootView.findViewById(R.id.profileThumbnail);
         final ImageView sendButton = rootView.findViewById(R.id.send_comment);
-        final DatabaseReference commentsRefNodePrincipal = FirebaseUtils.getCommentsRef().child(IdUserActive).child(IdFriendKey);
-        final DatabaseReference commentsRefNodeSecondary = FirebaseUtils.getCommentsRef().child(IdFriendKey).child(IdUserActive);
+
+        final String mm = "users_chats/" + IdUserActive + "/" + IdFriendKey;
+        final String commentsRefNodePrincipal = "chats/" + IdUserActive + "/" + IdFriendKey;
+        final String commentsRefNodeSecondary = "chats/" + IdFriendKey + "/" + IdUserActive;
 
         tvName = rootView.findViewById(R.id.tvName);
-        tvUserName = rootView.findViewById(R.id.tvUserName);
+        tvState = rootView.findViewById(R.id.tv_state);
         exit_mess = rootView.findViewById(R.id.exit_mess);
         send_photo = rootView.findViewById(R.id.send_photo);
 
@@ -128,13 +129,17 @@ public class FragmentChatRoom extends Fragment {
             }
         });
 
-        FirebaseUtils.getPeopleRef().child(IdFriendKey + "/author").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseUtils.getPeopleRef().child(IdFriendKey + "/author").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Author author = dataSnapshot.getValue(Author.class);
                 if (author != null) {
                     tvName.setText(author.getName());
-                    tvUserName.setText("@" + author.getUser_name());
+                    if (author.getIs_connected()) {
+                        tvState.setText("Online");
+                    } else {
+                        tvState.setText("At: " + author.getLast_connection());
+                    }
                     GlideUtils.loadProfileIcon(getActivity(), author.getProfile_picture(), profileThumbnail);
                 } else {
                     Toast.makeText(getContext(), "No hay usuario", Toast.LENGTH_SHORT).show();
@@ -158,11 +163,10 @@ public class FragmentChatRoom extends Fragment {
         });
 
         // SetUp firebase adapter
-
         mAdapter = new FirebaseRecyclerAdapter<Message, MessageViewHolder>(
                 Message.class,
                 1,
-                MessageViewHolder.class, commentsRefNodePrincipal) {
+                MessageViewHolder.class, FirebaseUtils.getBaseRef().child(commentsRefNodePrincipal)) {
             @NotNull
             @Override
             public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -186,23 +190,25 @@ public class FragmentChatRoom extends Fragment {
             protected void populateViewHolder(final MessageViewHolder viewHolder, Message message, int position) {
                 int[] date = configureMessageDate(message);
                 String keyMessage = getKey(position);
-                final DatabaseReference refMessage = commentsRefNodePrincipal.child(keyMessage);
-                refMessage.addValueEventListener(new ValueEventListener() {
+
+                final DatabaseReference refMessage = FirebaseUtils.getBaseRef().child(commentsRefNodePrincipal).child(keyMessage);
+                refMessage.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             if (!Objects.equals(dataSnapshot.child("state").getValue(), "check")) {
-                                setMessageStatus(refMessage,Constants.MESSAGE_CHECK);
+                                setMessageStatus(refMessage, Constants.MESSAGE_CHECK);
                             }
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
                 });
-                viewHolder.commentTime
-                        .setText(String.format("%02d:%02d", date[1], date[0]));
+
+                viewHolder.commentTime.setText(String.format("%02d:%02d", date[1], date[0]));
                 viewHolder.commentText.setText(message.getText());
                 viewHolder.authorRef = message.getUser_uid();
                 switch (viewHolder.getItemViewType()) {
@@ -222,6 +228,7 @@ public class FragmentChatRoom extends Fragment {
                                 GlideUtils.loadProfileIcon(getActivity(), dataSnapshot.child("profile_picture").getValue(String.class), viewHolder.commentPhoto);
                                 viewHolder.commentAuthor.setText(dataSnapshot.child("name").getValue(String.class));
                             }
+
                             @Override
                             public void onCancelled(@NotNull DatabaseError databaseError) {
 
@@ -271,7 +278,16 @@ public class FragmentChatRoom extends Fragment {
 
             Message comment = new Message(IdUserActive, commentText.toString(),
                     ServerValue.TIMESTAMP, "sent");
-            commentsRefNodePrincipal.push().setValue(comment, (error, firebase) -> {
+
+            String key = FirebaseUtils.getBaseRef().child(commentsRefNodePrincipal).push().getKey();
+
+            Map<String, Object> hopperUpdates = new HashMap<>();
+            hopperUpdates.put(mm + "/date", ServerValue.TIMESTAMP);
+            hopperUpdates.put(mm + "/state", true);
+            hopperUpdates.put(commentsRefNodePrincipal + "/" + key, comment);
+            hopperUpdates.put(commentsRefNodeSecondary + "/" + key, comment);
+
+            FirebaseUtils.getBaseRef().updateChildren(hopperUpdates, (error, firebase) -> {
                 if (error != null) {
                     Log.w(Constants.TAG, "Error posting comment: " + error.getMessage());
                     Toast.makeText(getActivity(), "Error posting comment.", Toast
@@ -281,16 +297,7 @@ public class FragmentChatRoom extends Fragment {
                 int bottomPosition = Objects.requireNonNull(mCommentsView.getAdapter()).getItemCount() - 1;
                 mCommentsView.smoothScrollToPosition(bottomPosition);
             });
-            commentsRefNodeSecondary.push().setValue(comment, (databaseError, databaseReference) -> {
-                if (databaseError != null) {
-                    Log.w(Constants.TAG, "Error posting comment: " + databaseError.getMessage());
-                    Toast.makeText(getActivity(), "Error posting comment.", Toast
-                            .LENGTH_SHORT).show();
-                    mEditText.setText(commentText);
-                }
-                int bottomPosition = Objects.requireNonNull(mCommentsView.getAdapter()).getItemCount() - 1;
-                mCommentsView.smoothScrollToPosition(bottomPosition);
-            });
+
         });
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -310,22 +317,24 @@ public class FragmentChatRoom extends Fragment {
         }
     }
 
-    private int[] configureMessageDate(Message message){
-        long milliseconds = (long) message.getTimestamp();
-        TimeZone tz = TimeZone.getDefault();
-        milliseconds = milliseconds + tz.getOffset(Calendar.ZONE_OFFSET);
-        int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
-        int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
-        return new int[]{minutes, hours};
+    private int[] configureMessageDate(Message message) {
+        try {
+            long milliseconds = (long) message.getTimestamp();
+            TimeZone tz = TimeZone.getDefault();
+            milliseconds = milliseconds + tz.getOffset(Calendar.ZONE_OFFSET);
+            int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
+            int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+            return new int[]{minutes, hours};
+        } catch (Exception e) {
+            return new int[]{0, 0};
+        }
+
     }
 
-    private void setMessageStatus(DatabaseReference ref, String messageStatus){
+    private void setMessageStatus(DatabaseReference ref, String messageStatus) {
         Map<String, Object> hopperUpdates = new HashMap<>();
-        hopperUpdates.put("state",messageStatus);
+        hopperUpdates.put("state", messageStatus);
         ref.updateChildren(hopperUpdates);
     }
 
-    private void setUpListeners(){
-
-    }
 }

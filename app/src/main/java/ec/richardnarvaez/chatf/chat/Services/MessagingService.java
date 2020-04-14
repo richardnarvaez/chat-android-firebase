@@ -1,4 +1,4 @@
-package ec.richardnarvaez.chatf.chat.Services;
+package ec.richardnarvaez.chatf.chat.services;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
