@@ -46,8 +46,15 @@ import ec.richardnarvaez.chatf.chat.adapters.FirebaseRecyclerAdapter;
 import ec.richardnarvaez.chatf.chat.models.Message;
 import ec.richardnarvaez.chatf.chat.ViewHolder.MessageViewHolder;
 import ec.richardnarvaez.chatf.chat.models.Author;
+import ec.richardnarvaez.chatf.notifications.ApiService;
+import ec.richardnarvaez.chatf.notifications.Client;
+import ec.richardnarvaez.chatf.notifications.Data;
+import ec.richardnarvaez.chatf.notifications.Response;
+import ec.richardnarvaez.chatf.notifications.Sender;
 import ec.richardnarvaez.chatf.utils.FirebaseUtils;
 import ec.richardnarvaez.chatf.utils.GlideUtils;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class FragmentChatRoom extends Fragment {
     // Items
@@ -90,11 +97,15 @@ public class FragmentChatRoom extends Fragment {
         }
     }
 
+
+    ApiService serviceNotify;
+    String tokenToSend;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         EmojiManager.install(new IosEmojiProvider());
-
+        serviceNotify = Client.getClient("https://fcm.googleapis.com/").create(ApiService.class);
         // Assignations
         final View rootView = inflater.inflate(R.layout.fragment_chat_room, container,
                 false);
@@ -107,6 +118,7 @@ public class FragmentChatRoom extends Fragment {
         final ImageView sendButton = rootView.findViewById(R.id.send_comment);
 
         final String mm = "users_chats/" + IdUserActive + "/" + IdFriendKey;
+        final String mm2 = "users_chats/" + IdFriendKey + "/" + IdUserActive;
         final String commentsRefNodePrincipal = "chats/" + IdUserActive + "/" + IdFriendKey;
         final String commentsRefNodeSecondary = "chats/" + IdFriendKey + "/" + IdUserActive;
 
@@ -133,9 +145,10 @@ public class FragmentChatRoom extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Author author = dataSnapshot.getValue(Author.class);
+                tokenToSend = author.getToken_msg();
                 if (author != null) {
                     tvName.setText(author.getName());
-                    if (author.getIs_connected()) {
+                    if (author.getIs_connected() != null && author.getIs_connected()) {
                         tvState.setText("Online");
                     } else {
                         tvState.setText("At: " + author.getLast_connection());
@@ -284,6 +297,10 @@ public class FragmentChatRoom extends Fragment {
             Map<String, Object> hopperUpdates = new HashMap<>();
             hopperUpdates.put(mm + "/date", ServerValue.TIMESTAMP);
             hopperUpdates.put(mm + "/state", true);
+
+            hopperUpdates.put(mm2 + "/date", ServerValue.TIMESTAMP);
+            hopperUpdates.put(mm2 + "/state", true);
+
             hopperUpdates.put(commentsRefNodePrincipal + "/" + key, comment);
             hopperUpdates.put(commentsRefNodeSecondary + "/" + key, comment);
 
@@ -294,6 +311,36 @@ public class FragmentChatRoom extends Fragment {
                             .LENGTH_SHORT).show();
                     mEditText.setText(commentText);
                 }
+
+                if (tokenToSend != null) {
+                    Data data = new Data("Pruebas de Nofificaciones", commentText.toString());
+                    Log.e("TAG", "DATA:" + data.getBody());
+                    Sender sender = new Sender(data, tokenToSend);
+                    sender.setTo(tokenToSend);//Tambien se puede poner una clasificacion o TAG
+                    Log.e("TAG", "Sender:" + tokenToSend);
+                    Log.e("TAG", "Sender:" + sender.data.getTitle());
+                    Log.e("TAG", "Sender:" + sender.to);
+
+                    serviceNotify.sendNotify(sender).enqueue(new Callback<Response>() {
+                        @Override
+                        public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                            assert response.body() != null;
+                            if (response.code() == 200 && response.isSuccessful()) {
+                                Log.e("TAG", "YES:" + response);
+                            } else {
+                                Log.e("TAG", "NOT:" + response);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Response> call, Throwable t) {
+                            Log.e("TAG", "ERROR:" + call);
+                        }
+                    });
+                } else {
+                    Log.e("TAG", "No se puede enviar notificacion");
+                }
+
                 int bottomPosition = Objects.requireNonNull(mCommentsView.getAdapter()).getItemCount() - 1;
                 mCommentsView.smoothScrollToPosition(bottomPosition);
             });

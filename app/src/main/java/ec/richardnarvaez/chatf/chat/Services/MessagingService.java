@@ -1,5 +1,6 @@
 package ec.richardnarvaez.chatf.chat.services;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -47,6 +48,10 @@ public class MessagingService extends FirebaseMessagingService {
                         url
                 );
 
+            } else {
+                sendNotification(
+                        remoteMessage.getData().get("title"),
+                        remoteMessage.getData().get("body"));
             }
 
         } else {
@@ -124,6 +129,7 @@ public class MessagingService extends FirebaseMessagingService {
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent)
+                        .setPriority(Notification.PRIORITY_MAX)
                         .setStyle(bigText);
 
         NotificationManager notificationManager =

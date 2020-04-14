@@ -197,7 +197,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 if (type.equals(FACEBOOK)) {
                     new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, graphResponse -> LoginManager.getInstance().logOut()).executeAsync();
                 } else if (type.equals(GOOGLE)) {
-                    FirebaseUtils.logOut(LoginActivity.this, googleApiClient);
+                    FirebaseUtils.logOut(LoginActivity.this);
                 }
             }
 

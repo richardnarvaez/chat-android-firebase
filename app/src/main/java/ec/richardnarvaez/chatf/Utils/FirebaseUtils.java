@@ -9,6 +9,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -32,6 +35,7 @@ import java.util.Map;
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.LoginActivity;
 import ec.richardnarvaez.chatf.activities.MainActivity;
+import ec.richardnarvaez.chatf.activities.SplashActivity;
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
 import ec.richardnarvaez.chatf.chat.models.Author;
 
@@ -336,15 +340,24 @@ public class FirebaseUtils {
     }
 
     //salir de sesión
-    public static void logOut(final Activity ctx, GoogleApiClient mGoogleApiClient) {
+    public static void logOut(final Activity ctx) {
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(ctx, gso);
 
         FirebaseAuth.getInstance().signOut();
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(ctx, new OnCompleteListener<Void>() {
                     @Override
-                    public void onResult(@NonNull Status status) {
+                    public void onComplete(@NonNull Task<Void> task) {
                         ctx.finish();
-                        ctx.startActivity(new Intent(ctx, LoginActivity.class));
+                        Intent i = new Intent(ctx, SplashActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        ctx.startActivity(i);
+                        ctx.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 });
 

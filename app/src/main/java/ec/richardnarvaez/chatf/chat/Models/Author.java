@@ -12,6 +12,15 @@ public class Author {
     private Boolean verified;
     private Boolean is_connected;
     private long last_connection;
+    private String token_msg;
+
+    public String getToken_msg() {
+        return token_msg;
+    }
+
+    public void setToken_msg(String token_msg) {
+        this.token_msg = token_msg;
+    }
 
     public long getLast_connection() {
         return last_connection;

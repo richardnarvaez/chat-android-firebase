@@ -86,14 +86,15 @@
                         <ImageView
                             android:id="@+id/imMessageStatus"
                             android:layout_width="16dp"
+                            android:visibility="gone"
                             android:layout_height="16dp"
+                            android:layout_marginEnd="8dp"
                             android:tint="@color/md_grey_500"
                             android:src="@drawable/ic_message_sent"
                             android:contentDescription="@string/message_status" />
 
                         <TextView
                             android:id="@+id/itemMessage"
-                            android:layout_marginStart="8dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/messageText" />
