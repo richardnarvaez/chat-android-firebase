@@ -9,11 +9,14 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.jetbrains.annotations.NotNull;
 
 import ec.richardnarvaez.chatf.activities.MainActivity;
 import ec.richardnarvaez.chatf.R;
@@ -137,4 +140,12 @@ public class MessagingService extends FirebaseMessagingService {
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
+    public void onNewToken(@NotNull String token) {
+        Log.d(TAG, "Refreshed token: " + token);
+        sendRegistrationToServer(token);
+    }
+
+    private void sendRegistrationToServer(String token) {
+        Toast.makeText(this, "TOKEN:" + token, Toast.LENGTH_SHORT).show();
+    }
 }
