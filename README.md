@@ -9,7 +9,7 @@ Images
 
 | Splash | Home | Proximamente  |
 | :-:   | :-: | :-: |
-| ![Login](screenshots/s_splash.png "Splash") | ![Home](screenshots/s_home.png "Home") | ![Home](screenshots/s_home.png "Home")|
+| ![Login](screenshots/s_splash.jpg "Splash") | ![Home](screenshots/s_home.jpg "Home") | ![Home](screenshots/s_home.jpg "Home")|
 
 
 License
