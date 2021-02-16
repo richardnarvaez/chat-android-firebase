@@ -30,7 +30,7 @@ import java.util.Map;
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.chat.adapters.TabsPagesAdapter;
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        Log.e("TAG", "PAUSADOOOO");
     }
 
     @Override

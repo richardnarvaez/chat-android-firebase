@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import ec.richardnarvaez.chatf.activities.MainActivity;
 import ec.richardnarvaez.chatf.R;
+import ec.richardnarvaez.chatf.activities.VideoCallActivity;
 
 
 public class MessagingService extends FirebaseMessagingService {
@@ -62,6 +63,12 @@ public class MessagingService extends FirebaseMessagingService {
             }
 
         }
+
+
+        Intent intent = new Intent(this, VideoCallActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        getApplicationContext().startActivity(intent);
 
 
     }

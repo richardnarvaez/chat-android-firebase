@@ -2,7 +2,7 @@ package ec.richardnarvaez.chatf
 
 import android.app.Application
 import android.util.Log
-import ec.richardnarvaez.chatf.utils.FirebaseUtils
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils
 
 class App : Application(), LifeCycleDelegate {
 

@@ -10,7 +10,7 @@ import ec.richardnarvaez.chatf.chat.Fragments.FragmentChatRoom;
 // HEAD
 
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 //ed574b80d4953298f9d3c12ab8be11f71966c1f9
 
 import android.os.Bundle;

@@ -51,7 +51,7 @@ import ec.richardnarvaez.chatf.notifications.Client;
 import ec.richardnarvaez.chatf.notifications.Data;
 import ec.richardnarvaez.chatf.notifications.Response;
 import ec.richardnarvaez.chatf.notifications.Sender;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 import ec.richardnarvaez.chatf.utils.GlideUtils;
 import retrofit2.Call;
 import retrofit2.Callback;

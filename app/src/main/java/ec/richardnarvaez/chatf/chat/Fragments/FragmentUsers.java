@@ -21,7 +21,7 @@ import ec.richardnarvaez.chatf.chat.models.Author;
 import ec.richardnarvaez.chatf.chat.models.Friend;
 import ec.richardnarvaez.chatf.chat.ViewHolder.ListUserViewHolder;
 import ec.richardnarvaez.chatf.chat.adapters.FirebaseRecyclerAdapter;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 
 public class FragmentUsers extends Fragment {
@@ -65,7 +65,7 @@ public class FragmentUsers extends Fragment {
                 }*/
 
                 view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_list_user, parent, false);
+                        .inflate(R.layout.item_chat, parent, false);
                 return new ListUserViewHolder(view);
             }
 

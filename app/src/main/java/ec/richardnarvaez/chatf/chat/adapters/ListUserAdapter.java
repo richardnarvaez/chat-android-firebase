@@ -31,7 +31,7 @@ public class ListUserAdapter extends RecyclerView.Adapter<ListUserAdapter.ViewHo
     /*inflate del item.xml*/
     public ListUserAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_user, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
         return viewHolder;
     }

@@ -25,7 +25,7 @@ import ec.richardnarvaez.chatf.chat.adapters.ContactAdapter;
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
 import ec.richardnarvaez.chatf.chat.models.Author;
 import ec.richardnarvaez.chatf.chat.models.Friend;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 public class FragmentContact extends Fragment {
     private DatabaseReference mRootReference;

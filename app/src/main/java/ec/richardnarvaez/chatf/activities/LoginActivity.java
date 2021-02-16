@@ -47,7 +47,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import ec.richardnarvaez.chatf.R;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 import ec.richardnarvaez.chatf.utils.GlideUtils;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {

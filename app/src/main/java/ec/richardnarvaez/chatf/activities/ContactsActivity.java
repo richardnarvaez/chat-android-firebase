@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.chat.Fragments.FragmentContact;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 public class ContactsActivity extends AppCompatActivity {
 

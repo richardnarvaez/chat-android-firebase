@@ -1,8 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.vanniktech:emoji-ios:0.6.0@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1cbf6ad0e9b9c1fb5f2e93a3ab28de2b/jetified-emoji-ios-0.6.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1cbf6ad0e9b9c1fb5f2e93a3ab28de2b/jetified-emoji-ios-0.6.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ad486c12e4893e49dbc3e13397990251/jetified-emoji-ios-0.6.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ad486c12e4893e49dbc3e13397990251/jetified-emoji-ios-0.6.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ad486c12e4893e49dbc3e13397990251/jetified-emoji-ios-0.6.0/res" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.vanniktech/emoji-ios/0.6.0/7ac0787e9c9e098ce08bbdfb02065ba26b7ee9c0/emoji-ios-0.6.0-javadoc.jar!/" />

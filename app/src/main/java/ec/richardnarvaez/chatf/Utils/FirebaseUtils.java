@@ -1,4 +1,4 @@
-package ec.richardnarvaez.chatf.utils;
+package ec.richardnarvaez.chatf.Utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,6 +31,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.activities.LoginActivity;
@@ -365,12 +366,16 @@ public class FirebaseUtils {
 
 
     public static void setLiveState(boolean state) {
-        DatabaseReference userLastOnlineRef = getPeopleRef()
-                .child(getCurrentUserId())
-                .child(Constants.AUTHOR_DATABASE);
-        userLastOnlineRef.child("is_connected").setValue(state);
-        if (!state) {
-            userLastOnlineRef.child("last_connection").setValue(ServerValue.TIMESTAMP);
+        try {
+            DatabaseReference userLastOnlineRef = getPeopleRef()
+                    .child(Objects.requireNonNull(getCurrentUserId()))
+                    .child(Constants.AUTHOR_DATABASE);
+            userLastOnlineRef.child("is_connected").setValue(state);
+            if (!state) {
+                userLastOnlineRef.child("last_connection").setValue(ServerValue.TIMESTAMP);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error");
         }
     }
 }

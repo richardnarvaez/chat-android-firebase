@@ -7,17 +7,17 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.chat.Fragments.FragmentChat;
 import ec.richardnarvaez.chatf.chat.Fragments.FragmentUsers;
-
 
 
 public class TabsPagesAdapter extends FragmentPagerAdapter {
 
     @StringRes
     private static final int[] TAB_TITLES =
-            new int[] { R.string.frgChat, R.string.frgCall};
+            new int[]{R.string.frgChat, R.string.frgStatus, R.string.frgCall};
     private final Context mContext;
 
     public TabsPagesAdapter(Context context, FragmentManager fm) {
@@ -32,6 +32,8 @@ public class TabsPagesAdapter extends FragmentPagerAdapter {
                 return FragmentChat.newInstance();
             case 1:
                 return FragmentUsers.newInstance();
+            case 2:
+                return FragmentUsers.newInstance();
             default:
                 return null;
         }
@@ -45,10 +47,8 @@ public class TabsPagesAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
-
-
 
 
 }

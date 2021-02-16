@@ -34,7 +34,7 @@ import ec.richardnarvaez.chatf.activities.ChatRoomActivity;
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
 import ec.richardnarvaez.chatf.chat.models.Friend;
 import ec.richardnarvaez.chatf.chat.models.Message;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 public class
 ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {

@@ -24,7 +24,7 @@ import com.google.firebase.iid.InstanceIdResult;
 
 import ec.richardnarvaez.chatf.R;
 import ec.richardnarvaez.chatf.chat.Constants.Constants;
-import ec.richardnarvaez.chatf.utils.FirebaseUtils;
+import ec.richardnarvaez.chatf.Utils.FirebaseUtils;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -133,12 +133,12 @@ public class SplashActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot snapshot) {
                     boolean connected = snapshot.getValue(Boolean.class);
 
-                    Toast.makeText(SplashActivity.this, "" + connected, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(SplashActivity.this, "" + connected, Toast.LENGTH_SHORT).show();
                     if (connected) {
                         DatabaseReference userLastOnlineRef = FirebaseUtils.getPeopleRef()
                                 .child(FirebaseUtils.getCurrentUserId())
                                 .child(Constants.AUTHOR_DATABASE);
-                        Toast.makeText(SplashActivity.this, "Se conecto", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(SplashActivity.this, "Se conecto", Toast.LENGTH_SHORT).show();
                         userLastOnlineRef.child("is_connected").setValue(true);
                         userLastOnlineRef.child("is_connected").onDisconnect().setValue(false);
                         userLastOnlineRef.child("last_connection").onDisconnect().setValue(ServerValue.TIMESTAMP);
